@@ -9,14 +9,25 @@ using UnityEngine.SceneManagement;
 [DefaultExecutionOrder(1000)]
 public class MenuUIHandler : MonoBehaviour
 {
-
-    private void Start()
+    private void Update()
     {
-        
+        if (Input.GetKeyDown(KeyCode.Alpha1))
+        {
+            StartVideo();
+        }else if (Input.GetKeyDown(KeyCode.Alpha2))
+        {
+            StartGame();
+        }
+    }
+
+    private void StartVideo()
+    {
+        Debug.Log("Started Video...");
     }
 
     public void StartGame()
     {
+        Debug.Log("Starting Game...");
         SceneManager.LoadScene(1);
     }
 }
