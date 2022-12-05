@@ -128,6 +128,12 @@ public class KinectSkeletonTracker : MonoBehaviour
                 {
                     if (body.TrackingId == trackedId)
                     {
+                        // Todo check performance hit on fps
+                        bool isBothHandsOpen = IsRightHandOpen(body) && IsLeftHandOpen(body);
+                        bool isBothHandsClosed = IsRightHandClosed(body) && IsLeftHandClosed(body);
+                        visualEffect.SetBool("BothHandsOpen", isBothHandsOpen);
+                        visualEffect.SetBool("BothHandsClosed", isBothHandsClosed);
+                        
                         foreach (var joint in jointMap)
                         {
                             visualEffect.SetVector3(joint.Key, GetVector3FromJoint(body.Joints[joint.Value]));
@@ -137,6 +143,26 @@ public class KinectSkeletonTracker : MonoBehaviour
                 }
             }
         }
+    }
+
+    private bool IsRightHandOpen(Body body)
+    {
+        return (body.HandRightState == HandState.Open && body.HandRightConfidence == TrackingConfidence.High);
+    }
+    
+    private bool IsRightHandClosed(Body body)
+    {
+        return (body.HandRightState == HandState.Closed && body.HandRightConfidence == TrackingConfidence.High);
+    }
+
+    private bool IsLeftHandOpen(Body body)
+    {
+        return (body.HandLeftState == HandState.Open && body.HandLeftConfidence == TrackingConfidence.High);
+    }
+    
+    private bool IsLeftHandClosed(Body body)
+    {
+        return (body.HandLeftState == HandState.Closed && body.HandLeftConfidence == TrackingConfidence.High);
     }
 
     private static Vector3 GetVector3FromJoint(KinectJoint joint)
