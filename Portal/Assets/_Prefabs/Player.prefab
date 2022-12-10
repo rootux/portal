@@ -58,7 +58,7 @@ MonoBehaviour:
   _defaultDespawnType: 0
   NetworkObserver: {fileID: 0}
   <PrefabId>k__BackingField: -1
-  _scenePathHash: 1034431739
+  _scenePathHash: 0
   <SceneId>k__BackingField: 0
   <AssetPathHash>k__BackingField: 2210204027807662330
   _sceneNetworkObjects:
@@ -94,6 +94,8 @@ MonoBehaviour:
   _addedNetworkObject: {fileID: 7495307354316573416}
   _networkObjectCache: {fileID: 7495307354316573416}
   player: {fileID: 8273386028550862642}
+  visualEffect: {fileID: 7495307353728759815}
+  kinectSkeletonTracker: {fileID: 7495307353728759813}
 --- !u!1001 &7495307353728759819
 PrefabInstance:
   m_ObjectHideFlags: 0

@@ -6,42 +6,45 @@ using UnityEngine;
 using FishNet.Connection;
 using FishNet.Object;
 using UnityEngine.VFX;
+using KinectVfx;
 
 public class PlayerNetwork : NetworkBehaviour
 {
 
     [SerializeField] private GameObject player;
-    private VisualEffect visualEffect;
+    [SerializeField] private VisualEffect visualEffect;
+    [SerializeField] private KinectSkeletonTracker kinectSkeletonTracker;
 
     // make sure we don't act on the other player 
     private void Start()
     {
-        visualEffect = player.GetComponent<VisualEffect>();
+        //visualEffect = player.GetComponent<VisualEffect>();
+        //kinectSkeletonTracker = player.GetComponent<KinectSkeletonTracker>();
     }
 
     public override void OnStartClient()
     {
         base.OnStartClient();
-        Debug.Log("on start");
+
         if (base.IsOwner)
         {
             transform.position = new Vector3(0, 0, 3);
             transform.eulerAngles = new Vector3(0, 180, 0);
+            kinectSkeletonTracker.enabled = true;
         }
         else
         {
+            kinectSkeletonTracker.enabled = false;
             transform.position = new Vector3(0, 0, 5);
-            //GetComponent<PlayerNetwork>().enabled = false;
+            transform.eulerAngles = new Vector3(0, 0, 0);
+            GetComponent<PlayerNetwork>().enabled = false;
         }
     }
 
     private void Update()
     {
-        if (Input.GetKeyDown(KeyCode.F))
-        {
-            Dictionary<string, Vector3> body = GetBody();
-            SetSkeltonServer(body);
-        }
+        Dictionary<string, Vector3> body = GetBody();
+        SetSkeltonServer(body);
     }
 
     private Dictionary<string,Vector3> GetBody()
@@ -66,9 +69,21 @@ public class PlayerNetwork : NetworkBehaviour
     [ObserversRpc]
     public void SendSkelton(Dictionary<string, Vector3> skelton)
     {
-        Debug.Log("Received body");
-        Debug.Log(skelton);
+        Debug.Log("got data");
+        foreach (var joint in Joints.JointMap.Keys)
+        {
+            Vector3 val;
+
+            if(skelton.TryGetValue(joint, out val))
+            {
+                visualEffect.SetVector3(joint, val);
+            }
+            else
+            {
+                Debug.LogError("bad joint name");
+            }
+        }
         // Debug.Log(skelton[0]);
-        
+
     }
 }
