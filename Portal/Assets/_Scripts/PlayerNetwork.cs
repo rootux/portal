@@ -47,7 +47,7 @@ public class PlayerNetwork : NetworkBehaviour
         SetSkeltonServer(body);
     }
 
-    private Dictionary<string,Vector3> GetBody()
+    private Dictionary<string, Vector3> GetBody()
     {
         Dictionary<string, Vector3> result = new Dictionary<string, Vector3>();
         foreach (var joint in Joints.JointMap.Keys)
@@ -69,18 +69,22 @@ public class PlayerNetwork : NetworkBehaviour
     [ObserversRpc]
     public void SendSkelton(Dictionary<string, Vector3> skelton)
     {
-        Debug.Log("got data");
-        foreach (var joint in Joints.JointMap.Keys)
+        if (base.IsOwner == false)
         {
-            Vector3 val;
 
-            if(skelton.TryGetValue(joint, out val))
+            Debug.Log("got data");
+            foreach (var joint in Joints.JointMap.Keys)
             {
-                visualEffect.SetVector3(joint, val);
-            }
-            else
-            {
-                Debug.LogError("bad joint name");
+                Vector3 val;
+
+                if (skelton.TryGetValue(joint, out val))
+                {
+                    visualEffect.SetVector3(joint, val);
+                }
+                else
+                {
+                    Debug.LogError("bad joint name");
+                }
             }
         }
         // Debug.Log(skelton[0]);
