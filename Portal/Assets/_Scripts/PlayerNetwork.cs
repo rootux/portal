@@ -22,13 +22,16 @@ public class PlayerNetwork : NetworkBehaviour
     public override void OnStartClient()
     {
         base.OnStartClient();
+        Debug.Log("on start");
         if (base.IsOwner)
         {
-
+            transform.position = new Vector3(0, 0, 3);
+            transform.eulerAngles = new Vector3(0, 180, 0);
         }
         else
         {
-            GetComponent<PlayerNetwork>().enabled = false;
+            transform.position = new Vector3(0, 0, 5);
+            //GetComponent<PlayerNetwork>().enabled = false;
         }
     }
 
@@ -56,6 +59,7 @@ public class PlayerNetwork : NetworkBehaviour
     [ServerRpc]
     public void SetSkeltonServer(Dictionary<string, Vector3> skelton)
     {
+
         SendSkelton(skelton);
     }
 

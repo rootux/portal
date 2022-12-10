@@ -245,4 +245,6 @@ public class NetworkHudCanvases : MonoBehaviour
         _eventSystem?.SetSelectedGameObject(null);
 #endif
     }
+
+    //override on_cli
 }
