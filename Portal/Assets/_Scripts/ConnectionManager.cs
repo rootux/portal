@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using FishNet.Managing;
 using Newtonsoft.Json;
+using FishNet.Transporting;
 
 public class ConnectionManager : MonoBehaviour
 {
@@ -16,7 +17,13 @@ public class ConnectionManager : MonoBehaviour
         m_NetworkManager = GetComponent<NetworkManager>();
         //JsonConverter
 
-        if(m_IsServer == true)
+        m_NetworkManager.ClientManager.OnClientConnectionState += Test;
+        connect();
+    }
+
+    private void connect()
+    {
+        if (m_IsServer == true)
         {
             m_NetworkManager.ServerManager.StartConnection();
             m_NetworkManager.ClientManager.StartConnection();
@@ -25,5 +32,19 @@ public class ConnectionManager : MonoBehaviour
         {
             m_NetworkManager.ClientManager.StartConnection(m_AdressServer);
         }
+    }
+
+    private void Update()
+    {
+        //if(m_NetworkManager.ClientManager.Started)
+    }
+
+    public void Test(ClientConnectionStateArgs args)
+    {
+        if(args.ConnectionState == LocalConnectionState.Stopped)
+        {
+            connect();
+        }
+        Debug.Log(args.ConnectionState);
     }
 }

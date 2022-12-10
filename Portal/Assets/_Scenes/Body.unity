@@ -679,8 +679,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: dc61945c26e45cb4891875452271d0b9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_IsServer: 1
-  m_AdressServer: 
+  m_IsServer: 0
+  m_AdressServer: 2a06:c701:7005:dc00:6c83:9f9c:c602:70a4
 --- !u!1 &1844338083
 GameObject:
   m_ObjectHideFlags: 0
