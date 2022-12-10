@@ -96,6 +96,10 @@ MonoBehaviour:
   player: {fileID: 8273386028550862642}
   visualEffect: {fileID: 7495307353728759815}
   kinectSkeletonTracker: {fileID: 7495307353728759813}
+  m_VisualEffectClient: {fileID: 8926484042661614526, guid: 7981d2b65c15d3e428c80851fd414eb1,
+    type: 3}
+  m_VisualEffectServer: {fileID: 8926484042661614526, guid: 8ab16ef8fb7adec498ce284a393c6fbe,
+    type: 3}
 --- !u!1001 &7495307353728759819
 PrefabInstance:
   m_ObjectHideFlags: 0

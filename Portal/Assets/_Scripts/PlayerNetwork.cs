@@ -14,6 +14,8 @@ public class PlayerNetwork : NetworkBehaviour
     [SerializeField] private GameObject player;
     [SerializeField] private VisualEffect visualEffect;
     [SerializeField] private KinectSkeletonTracker kinectSkeletonTracker;
+    [SerializeField] private VisualEffectAsset m_VisualEffectClient;
+    [SerializeField] private VisualEffectAsset m_VisualEffectServer;
 
     // make sure we don't act on the other player 
     private void Start()
@@ -24,6 +26,7 @@ public class PlayerNetwork : NetworkBehaviour
 
     public override void OnStartClient()
     {
+        //m_VisualEffect.ass
         base.OnStartClient();
 
         if (base.IsOwner)
@@ -31,6 +34,7 @@ public class PlayerNetwork : NetworkBehaviour
             transform.position = new Vector3(0, 0, 3);
             transform.eulerAngles = new Vector3(0, 180, 0);
             kinectSkeletonTracker.enabled = true;
+            visualEffect.visualEffectAsset = m_VisualEffectServer;
         }
         else
         {
@@ -38,6 +42,7 @@ public class PlayerNetwork : NetworkBehaviour
             transform.position = new Vector3(0, 0, 5);
             transform.eulerAngles = new Vector3(0, 0, 0);
             GetComponent<PlayerNetwork>().enabled = false;
+            visualEffect.visualEffectAsset = m_VisualEffectClient;
         }
     }
 
@@ -49,13 +54,16 @@ public class PlayerNetwork : NetworkBehaviour
 
     private Dictionary<string, Vector3> GetBody()
     {
+        string data = "";
         Dictionary<string, Vector3> result = new Dictionary<string, Vector3>();
         foreach (var joint in Joints.JointMap.Keys)
         {
             Vector3 vector = visualEffect.GetVector3(joint);
+            data += "name: " + joint + ", value: " + vector.ToString() + "\n";
             result[joint] = vector;
         }
 
+            Debug.Log("data send:\n" + data);
         return result;
     }
 
@@ -71,14 +79,14 @@ public class PlayerNetwork : NetworkBehaviour
     {
         if (base.IsOwner == false)
         {
-
-            Debug.Log("got data");
+            string data = "";
             foreach (var joint in Joints.JointMap.Keys)
             {
                 Vector3 val;
 
                 if (skelton.TryGetValue(joint, out val))
                 {
+                    data += "name: " + joint + ", value: " + val.ToString() + "\n";
                     visualEffect.SetVector3(joint, val);
                 }
                 else
@@ -86,6 +94,7 @@ public class PlayerNetwork : NetworkBehaviour
                     Debug.LogError("bad joint name");
                 }
             }
+            Debug.Log("data get:\n" + data);
         }
         // Debug.Log(skelton[0]);
 
