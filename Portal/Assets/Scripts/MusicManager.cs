@@ -23,10 +23,9 @@ public class MusicManager : MonoBehaviour
     private string chosenFolder;
     private FileInfo[] chosenFolderFiles;
     private List<int> filesPlayOrder;
+    private int currentChosenFolderIndex = 0;
     private List<int> foldersPlayOrder = new();
-    
-    const int NUMBER_OF_FOLDER_REPEATS = 2;
-    
+
     void Start()
     {
         source = GetComponent<AudioSource>();
@@ -55,24 +54,18 @@ public class MusicManager : MonoBehaviour
 
     private void ShuffleFolders()
     {
-        for (var i=0; i < NUMBER_OF_FOLDER_REPEATS; i++)
-        {
-            var folderShuffle = Enumerable.Range(0, mp3Directories.Count - 1).ToList();
-            KnuthShuffleArray(folderShuffle);
-            foldersPlayOrder.AddRange(folderShuffle);
-        }
+        foldersPlayOrder = Enumerable.Range(0, mp3Directories.Count).ToList();
+        KnuthShuffleArray(foldersPlayOrder);
     }
     
     private void PickNextFolder()
     {
-        var isFinishedLoopingAllFolder = (foldersPlayOrder.Count <= 0); 
+        var isFinishedLoopingAllFolder = (currentChosenFolderIndex == mp3Directories.Count); 
         if (isFinishedLoopingAllFolder)
         {
-            InitMusic();
-            return;
+            currentChosenFolderIndex = 0;
         }
-        var folderIndexToPlay = foldersPlayOrder[0];
-        foldersPlayOrder.RemoveAt(0);
+        var folderIndexToPlay = foldersPlayOrder[currentChosenFolderIndex++];
         chosenFolder = Path.Combine(Application.dataPath, musicRootPath, mp3Directories[folderIndexToPlay]);
         Debug.Log("Chosen " + chosenFolder + " music");
     }
@@ -81,7 +74,7 @@ public class MusicManager : MonoBehaviour
     {
         Debug.Log("Playing next random");
         chosenFolderFiles = GetAllMp3InDirectory(chosenFolder);
-        filesPlayOrder = Enumerable.Range(0, chosenFolderFiles.Length - 1).ToList();
+        filesPlayOrder = Enumerable.Range(0, chosenFolderFiles.Length).ToList();
         KnuthShuffleArray(filesPlayOrder);
     }
 
