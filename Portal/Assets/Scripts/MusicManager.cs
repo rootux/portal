@@ -41,6 +41,15 @@ public class MusicManager : MonoBehaviour
             Debug.LogError("Please set mp3 directories names for sound to play");
             return;
         }
+
+        foreach (var dir in mp3Directories)
+        {
+            var fullDir = chosenFolder = Path.Combine(Application.dataPath, musicRootPath, dir);
+            if (!Directory.Exists(fullDir)) {
+                Debug.LogError("Cant play music - directory " + fullDir + " does not exists");
+                return;
+            }
+        }
         ShuffleFolders();
         PlayNextFolder();
     }
