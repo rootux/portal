@@ -3,9 +3,12 @@ using UnityEngine.UI;
 using UnityEngine.Serialization;
 using Agora.Rtc;
 using Agora.Util;
+using FishNet.Managing.Scened;
 using Logger = Agora.Util.Logger;
+using UnityEngine.SceneManagement;
+using SceneManager = UnityEngine.SceneManagement.SceneManager;
 
-public class AgoraVideoHandler : MonoBehaviour
+public class AgoraVideoManager : MonoBehaviour
 {
     private string _appID = "88b1b90c1f914369aae5be3bece1347e";
     private string _token = "007eJxTYBDOqVQ8r7jhiuiGZTJG3x4en+zX9ePZag3jDi/Wvw/snNYpMFhYJBkmWRokG6ZZGpoYm1kmJqaaJqUaJ6Umpxoam5inumlOT24IZGTQCZjNyMgAgSA+G0NBflFJYg4DAwCeSyA4";
@@ -20,6 +23,7 @@ public class AgoraVideoHandler : MonoBehaviour
 
     private void Start()
     {
+        StartVideo();
     }
 
     public void StartVideo()
@@ -33,7 +37,7 @@ public class AgoraVideoHandler : MonoBehaviour
 
     internal void RenewOrJoinToken(string newToken)
     {
-        AgoraVideoHandler._channelToken = newToken;
+        AgoraVideoManager._channelToken = newToken;
         if (_state == CONNECTION_STATE_TYPE.CONNECTION_STATE_DISCONNECTED
             || _state == CONNECTION_STATE_TYPE.CONNECTION_STATE_DISCONNECTED
             || _state == CONNECTION_STATE_TYPE.CONNECTION_STATE_FAILED
@@ -54,11 +58,15 @@ public class AgoraVideoHandler : MonoBehaviour
     {
         PermissionHelper.RequestMicrophontPermission();
         PermissionHelper.RequestCameraPermission();
+        if (Input.GetKeyDown(KeyCode.Escape))
+        {
+            SceneManager.LoadScene(0);
+        }
     }
 
     private void UpdateToken()
     {
-        RtcEngine.RenewToken(AgoraVideoHandler._channelToken);
+        RtcEngine.RenewToken(AgoraVideoManager._channelToken);
     }
 
     private bool CheckAppId()
@@ -212,9 +220,9 @@ public class AgoraVideoHandler : MonoBehaviour
 
 internal class UserEventHandler : IRtcEngineEventHandler
 {
-    private readonly AgoraVideoHandler _helloVideoTokenAgora;
+    private readonly AgoraVideoManager _helloVideoTokenAgora;
 
-    internal UserEventHandler(AgoraVideoHandler helloVideoTokenAgora)
+    internal UserEventHandler(AgoraVideoManager helloVideoTokenAgora)
     {
         _helloVideoTokenAgora = helloVideoTokenAgora;
     }
@@ -233,9 +241,9 @@ internal class UserEventHandler : IRtcEngineEventHandler
             string.Format("OnJoinChannelSuccess channelName: {0}, uid: {1}, elapsed: {2}",
                 connection.channelId, connection.localUid, elapsed));
         _helloVideoTokenAgora.Log.UpdateLog(string.Format("New Token: {0}",
-            AgoraVideoHandler._channelToken));
+            AgoraVideoManager._channelToken));
         // HelperClass.FetchToken(tokenBase, channelName, 0, this.RenewOrJoinToken);
-        AgoraVideoHandler.MakeVideoView(0);
+        AgoraVideoManager.MakeVideoView(0);
     }
 
     public override void OnRejoinChannelSuccess(RtcConnection connection, int elapsed)
@@ -246,7 +254,7 @@ internal class UserEventHandler : IRtcEngineEventHandler
     public override void OnLeaveChannel(RtcConnection connection, RtcStats stats)
     {
         _helloVideoTokenAgora.Log.UpdateLog("OnLeaveChannel");
-        AgoraVideoHandler.DestroyVideoView(0);
+        AgoraVideoManager.DestroyVideoView(0);
     }
 
     public override void OnClientRoleChanged(RtcConnection connection, CLIENT_ROLE_TYPE oldRole,
@@ -259,19 +267,19 @@ internal class UserEventHandler : IRtcEngineEventHandler
     {
         _helloVideoTokenAgora.Log.UpdateLog(string.Format("OnUserJoined uid: ${0} elapsed: ${1}", uid,
             elapsed));
-        AgoraVideoHandler.MakeVideoView(uid, _helloVideoTokenAgora.GetChannelName());
+        AgoraVideoManager.MakeVideoView(uid, _helloVideoTokenAgora.GetChannelName());
     }
 
     public override void OnUserOffline(RtcConnection connection, uint uid, USER_OFFLINE_REASON_TYPE reason)
     {
         _helloVideoTokenAgora.Log.UpdateLog(string.Format("OnUserOffLine uid: ${0}, reason: ${1}", uid,
             (int)reason));
-        AgoraVideoHandler.DestroyVideoView(uid);
+        AgoraVideoManager.DestroyVideoView(uid);
     }
 
     public override void OnTokenPrivilegeWillExpire(RtcConnection connection, string token)
     {
-        _helloVideoTokenAgora.StartCoroutine(HelperClass.FetchToken(AgoraVideoHandler._tokenBase,
+        _helloVideoTokenAgora.StartCoroutine(HelperClass.FetchToken(AgoraVideoManager._tokenBase,
             _helloVideoTokenAgora.GetChannelName(), 0, _helloVideoTokenAgora.RenewOrJoinToken));
     }
 

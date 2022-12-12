@@ -20,9 +20,10 @@ public class MenuUIHandler : MonoBehaviour
         }
     }
 
-    private void StartVideo()
+    public void StartVideo()
     {
         Debug.Log("Started Video...");
+        SceneManager.LoadScene(2);
     }
 
     public void StartGame()
