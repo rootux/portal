@@ -11,13 +11,13 @@ using System.Collections;
 
 public class AgoraVideoManager : MonoBehaviour
 {
-    private string _appID = "88b1b90c1f914369aae5be3bece1347e";
-    private string _token = "007eJxTYBDOqVQ8r7jhiuiGZTJG3x4en+zX9ePZag3jDi/Wvw/snNYpMFhYJBkmWRokG6ZZGpoYm1kmJqaaJqUaJ6Umpxoam5inumlOT24IZGTQCZjNyMgAgSA+G0NBflFJYg4DAwCeSyA4";
+    private string _appID = "6cb2896f463a48849fdbfb390269d341";
+    private string _token = "007eJxTYNi2Vyau+qnsXbYwg4D1Ej1lQpO1o1o0881e/Dz/f018k7YCg1lykpGFpVmaiZlxoomFhYllWkpSWpKxpYGRmWWKsYmh1N05yQ2BjAzOWekMjFAI4rMxFOQXlSTmMDAAACjWHtA=";
     private string _channelName = "portal";
     public Text LogText;
     internal Logger Log;
     internal IRtcEngine RtcEngine = null;
-    internal static string _channelToken = "007eJxTYBDOqVQ8r7jhiuiGZTJG3x4en+zX9ePZag3jDi/Wvw/snNYpMFhYJBkmWRokG6ZZGpoYm1kmJqaaJqUaJ6Umpxoam5inumlOT24IZGTQCZjNyMgAgSA+G0NBflFJYg4DAwCeSyA4";
+    internal static string _channelToken = "007eJxTYNi2Vyau+qnsXbYwg4D1Ej1lQpO1o1o0881e/Dz/f018k7YCg1lykpGFpVmaiZlxoomFhYllWkpSWpKxpYGRmWWKsYmh1N05yQ2BjAzOWekMjFAI4rMxFOQXlSTmMDAAACjWHtA=";
     internal static string _tokenBase = "http://localhost:8080";
     internal CONNECTION_STATE_TYPE _state = CONNECTION_STATE_TYPE.CONNECTION_STATE_DISCONNECTED;
     int timestamp = 0;

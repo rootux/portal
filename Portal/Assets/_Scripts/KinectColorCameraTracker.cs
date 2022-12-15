@@ -13,12 +13,12 @@ public class KinectColorCameraTracker : MonoBehaviour
 
     private KinectSensor _Sensor;
     private ColorFrameReader _Reader;
-    private static Texture2D _Texture;
+    public static Texture2D Texture;
     private byte[] _Data;
 
     public static Texture2D GetColorTexture()
     {
-        return _Texture;
+        return Texture;
     }
 
     void Start()
@@ -33,7 +33,7 @@ public class KinectColorCameraTracker : MonoBehaviour
             ColorWidth = frameDesc.Width;
             ColorHeight = frameDesc.Height;
 
-            _Texture = new Texture2D(frameDesc.Width, frameDesc.Height, TextureFormat.RGBA32, false);
+            Texture = new Texture2D(frameDesc.Width, frameDesc.Height, TextureFormat.RGBA32, false);
             _Data = new byte[frameDesc.BytesPerPixel * frameDesc.LengthInPixels];
 
             if (!_Sensor.IsOpen)
@@ -52,8 +52,8 @@ public class KinectColorCameraTracker : MonoBehaviour
             if (frame != null)
             {
                 frame.CopyConvertedFrameDataToArray(_Data, ColorImageFormat.Rgba);
-                _Texture.LoadRawTextureData(_Data);
-                _Texture.Apply();
+                Texture.LoadRawTextureData(_Data);
+                Texture.Apply();
 
                 frame.Dispose();
                 frame = null;
