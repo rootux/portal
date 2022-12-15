@@ -1,29 +1,28 @@
 ﻿using UnityEngine;
 using UnityEngine.UI;
-using UnityEngine.Serialization;
 using Agora.Rtc;
 using Agora.Util;
-using FishNet.Managing.Scened;
 using Logger = Agora.Util.Logger;
-using UnityEngine.SceneManagement;
 using SceneManager = UnityEngine.SceneManagement.SceneManager;
 
 public class AgoraVideoManager : MonoBehaviour
 {
-    private string _appID = "88b1b90c1f914369aae5be3bece1347e";
-    private string _token = "007eJxTYBDOqVQ8r7jhiuiGZTJG3x4en+zX9ePZag3jDi/Wvw/snNYpMFhYJBkmWRokG6ZZGpoYm1kmJqaaJqUaJ6Umpxoam5inumlOT24IZGTQCZjNyMgAgSA+G0NBflFJYg4DAwCeSyA4";
-    private string _channelName = "portal";
+    private string _appID;
+    private string _token;
+    private string _channelName;
     public Text LogText;
     internal Logger Log;
     internal IRtcEngine RtcEngine = null;
-    internal static string _channelToken = "007eJxTYBDOqVQ8r7jhiuiGZTJG3x4en+zX9ePZag3jDi/Wvw/snNYpMFhYJBkmWRokG6ZZGpoYm1kmJqaaJqUaJ6Umpxoam5inumlOT24IZGTQCZjNyMgAgSA+G0NBflFJYg4DAwCeSyA4";
+    internal static string _channelToken;
     internal static string _tokenBase = "http://localhost:8080";
     internal CONNECTION_STATE_TYPE _state = CONNECTION_STATE_TYPE.CONNECTION_STATE_DISCONNECTED;
-    GlobalSettings globalSettings = null;
-    private string m_AdressServer = "";
 
     private void Start()
     {
+        _appID = GlobalSettings.Instance.agoraAppId;
+        _token = GlobalSettings.Instance.agoraToken;
+        _channelName = GlobalSettings.Instance.agoraChannelName;
+        _channelToken = GlobalSettings.Instance.agoraToken;
         StartVideo();
     }
 
