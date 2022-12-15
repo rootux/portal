@@ -7,6 +7,7 @@ using FishNet.Managing.Scened;
 using Logger = Agora.Util.Logger;
 using UnityEngine.SceneManagement;
 using SceneManager = UnityEngine.SceneManagement.SceneManager;
+using System.Collections;
 
 public class AgoraVideoManager : MonoBehaviour
 {
@@ -19,6 +20,7 @@ public class AgoraVideoManager : MonoBehaviour
     internal static string _channelToken = "007eJxTYBDOqVQ8r7jhiuiGZTJG3x4en+zX9ePZag3jDi/Wvw/snNYpMFhYJBkmWRokG6ZZGpoYm1kmJqaaJqUaJ6Umpxoam5inumlOT24IZGTQCZjNyMgAgSA+G0NBflFJYg4DAwCeSyA4";
     internal static string _tokenBase = "http://localhost:8080";
     internal CONNECTION_STATE_TYPE _state = CONNECTION_STATE_TYPE.CONNECTION_STATE_DISCONNECTED;
+    int timestamp = 0;
 
 
     private void Start()
@@ -81,8 +83,21 @@ public class AgoraVideoManager : MonoBehaviour
         RtcEngineContext context = new RtcEngineContext(_appID, 0,
             CHANNEL_PROFILE_TYPE.CHANNEL_PROFILE_LIVE_BROADCASTING,
             AUDIO_SCENARIO_TYPE.AUDIO_SCENARIO_DEFAULT);
+        /*       SenderOptions options = new SenderOptions();
+               // options.codecType = VIDEO_CODEC_TYPE.VIDEO_CODEC_H265;
+               RtcEngine.SetExternalVideoSource(true, true, EXTERNAL_VIDEO_SOURCE_TYPE.ENCODED_VIDEO_FRAME, options);
+               RtcEngine.SetVideoEncoderConfiguration(new VideoEncoderConfiguration()
+               {
+                   bitrate = 1130,
+                   frameRate = (int)FRAME_RATE.FRAME_RATE_FPS_15,
+                   dimensions = new VideoDimensions() { width = Screen.width, height = Screen.height },
+
+                   // Note if your remote user video surface to set to flip Horizontal, then we should flip it before sending
+                   mirrorMode = VIDEO_MIRROR_MODE_TYPE.VIDEO_MIRROR_MODE_ENABLED
+               }); */
         RtcEngine.Initialize(context);
         RtcEngine.InitEventHandler(handler);
+        shareScreen();
     }
 
     private void JoinChannel()
@@ -115,41 +130,91 @@ public class AgoraVideoManager : MonoBehaviour
     }
         #region -- Video Render UI Logic ---
 
-        internal static void MakeVideoView(uint uid, string channelId = "")
+    internal static void MakeVideoView(uint uid, string channelId = "")
+    {
+        GameObject go = GameObject.Find(uid.ToString());
+        if (!ReferenceEquals(go, null))
         {
-            GameObject go = GameObject.Find(uid.ToString());
-            if (!ReferenceEquals(go, null))
-            {
-                return; // reuse
-            }
-
-            // create a GameObject and assign to this new user
-            VideoSurface videoSurface = MakeImageSurface(uid.ToString());
-            if (!ReferenceEquals(videoSurface, null))
-            {
-                // configure videoSurface
-                if (uid == 0)
-                {
-                    videoSurface.SetForUser(uid, channelId);
-                }
-                else
-                {
-                    videoSurface.SetForUser(uid, channelId, VIDEO_SOURCE_TYPE.VIDEO_SOURCE_REMOTE);
-                }
-
-                videoSurface.OnTextureSizeModify += (int width, int height) =>
-                {
-                    float scale = (float)height / (float)width;
-                    videoSurface.transform.localScale = new Vector3(-5, 5 * scale, 1);
-                    Debug.Log("OnTextureSizeModify: " + width + "  " + height);
-                };
-
-                videoSurface.SetEnable(true);
-            }
+            return; // reuse
         }
 
-        // VIDEO TYPE 1: 3D Object
-        private static VideoSurface MakePlaneSurface(string goName)
+        // create a GameObject and assign to this new user
+        VideoSurface videoSurface = MakeImageSurface(uid.ToString());
+        if (!ReferenceEquals(videoSurface, null))
+        {
+            // configure videoSurface
+            if (uid == 0)
+            {
+                videoSurface.SetForUser(uid, channelId, VIDEO_SOURCE_TYPE.VIDEO_SOURCE_CAMERA_PRIMARY);
+            }
+            else
+            {
+                videoSurface.SetForUser(uid, channelId, VIDEO_SOURCE_TYPE.VIDEO_SOURCE_REMOTE);
+            }
+
+            videoSurface.OnTextureSizeModify += (int width, int height) =>
+            {
+                float scale = (float)height / (float)width;
+                videoSurface.transform.localScale = new Vector3(-5, 5 * scale, 1);
+                Debug.Log("OnTextureSizeModify: " + width + "  " + height);
+            };
+
+            videoSurface.SetEnable(true);
+        }
+    }
+
+    IEnumerator shareScreen()
+    {
+        Debug.Log("Share screen called");
+        yield return new WaitForEndOfFrame();
+        //Read the Pixels inside the Rectangle
+        // mTexture.ReadPixels(mRect, 0, 0);
+        //Apply the Pixels read from the rectangle to the texture
+        // mTexture.Apply();
+        // Get the Raw Texture data from the the from the texture and apply it to an array of bytes
+        Texture2D texture = KinectColorCameraTracker.GetColorTexture();
+        Debug.Log("Got kinect color texture");
+        byte[] bytes = texture.GetRawTextureData();
+        Debug.Log(bytes[10]);
+        // int size = Marshal.SizeOf(bytes[0]) * bytes.Length;
+        // Check to see if there is an engine instance already created
+        //if the engine is present
+        if (RtcEngine != null)
+        {
+            Debug.Log("External video frame");
+            //Create a new external video frame
+            ExternalVideoFrame externalVideoFrame = new ExternalVideoFrame();
+            //Set the buffer type of the video frame
+            externalVideoFrame.type = VIDEO_BUFFER_TYPE.VIDEO_BUFFER_RAW_DATA;
+            // Set the video pixel format
+            //externalVideoFrame.format = ExternalVideoFrame.VIDEO_PIXEL_FORMAT.VIDEO_PIXEL_BGRA;  // V.2.9.x
+            externalVideoFrame.format = VIDEO_PIXEL_FORMAT.VIDEO_PIXEL_RGBA;  // V.3.x.x
+            //apply raw data you are pulling from the rectangle you created earlier to the video frame
+            externalVideoFrame.buffer = bytes;
+            //Set the width of the video frame (in pixels)
+            externalVideoFrame.stride = texture.width;
+            //Set the height of the video frame
+            externalVideoFrame.height = texture.height;
+            //Remove pixels from the sides of the frame
+            externalVideoFrame.cropLeft = 10;
+            externalVideoFrame.cropTop = 10;
+            externalVideoFrame.cropRight = 10;
+            externalVideoFrame.cropBottom = 10;
+            //Rotate the video frame (0, 90, 180, or 270)
+            externalVideoFrame.rotation = 180;
+            externalVideoFrame.timestamp = timestamp++;
+            //Push the external video frame with the frame we just created
+            RtcEngine.PushVideoFrame(externalVideoFrame);
+            if (timestamp % 100 == 0)
+            {
+                Debug.LogWarning("Pushed frame = " + timestamp);
+            }
+
+        }
+    }
+
+    // VIDEO TYPE 1: 3D Object
+    private static VideoSurface MakePlaneSurface(string goName)
         {
             GameObject go = GameObject.CreatePrimitive(PrimitiveType.Plane);
 
@@ -234,6 +299,7 @@ internal class UserEventHandler : IRtcEngineEventHandler
 
     public override void OnJoinChannelSuccess(RtcConnection connection, int elapsed)
     {
+        base.OnJoinChannelSuccess(connection, elapsed);
         int build = 0;
         _helloVideoTokenAgora.Log.UpdateLog(string.Format("sdk version: ${0}",
             _helloVideoTokenAgora.RtcEngine.GetVersion(ref build)));
@@ -244,7 +310,7 @@ internal class UserEventHandler : IRtcEngineEventHandler
             AgoraVideoManager._channelToken));
         // HelperClass.FetchToken(tokenBase, channelName, 0, this.RenewOrJoinToken);
         AgoraVideoManager.MakeVideoView(0);
-    }
+     }
 
     public override void OnRejoinChannelSuccess(RtcConnection connection, int elapsed)
     {
