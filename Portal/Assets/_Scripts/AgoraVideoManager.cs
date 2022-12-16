@@ -19,7 +19,8 @@ public class AgoraVideoManager : MonoBehaviour
     internal static string _channelToken = "007eJxTYBDOqVQ8r7jhiuiGZTJG3x4en+zX9ePZag3jDi/Wvw/snNYpMFhYJBkmWRokG6ZZGpoYm1kmJqaaJqUaJ6Umpxoam5inumlOT24IZGTQCZjNyMgAgSA+G0NBflFJYg4DAwCeSyA4";
     internal static string _tokenBase = "http://localhost:8080";
     internal CONNECTION_STATE_TYPE _state = CONNECTION_STATE_TYPE.CONNECTION_STATE_DISCONNECTED;
-
+    GlobalSettings globalSettings = null;
+    private string m_AdressServer = "";
 
     private void Start()
     {

@@ -1,3 +1,4 @@
+using System;
 using System.IO;
 using System.Collections;
 using System.Collections.Generic;
@@ -11,10 +12,19 @@ public class ConnectionManager : MonoBehaviour
     private NetworkManager m_NetworkManager;
     [SerializeField] private bool m_IsServer = false;
     [SerializeField] private string m_AdressServer = "";
+    GlobalSettings globalSettings = null;
 
     private void Start()
     {
+        if (GameObject.Find("globalSettings") == null)
+        {
+            globalSettings = PortalUtils.ImportJson("settings");
+        }
+        m_AdressServer = globalSettings.serverStaticIp;
+        m_IsServer = globalSettings.isServer;
+        
         m_NetworkManager = GetComponent<NetworkManager>();
+        
         //JsonConverter
 
         m_NetworkManager.ClientManager.OnClientConnectionState += Test;
