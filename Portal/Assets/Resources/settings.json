@@ -1,0 +1,5 @@
+{
+  "is_server": "true",
+  "music_folders_array": ["folder1", "folder2"],
+  "server_static_ip": "192.7.7.2"
+}

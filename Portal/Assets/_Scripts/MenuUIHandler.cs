@@ -9,6 +9,7 @@ using UnityEngine.SceneManagement;
 [DefaultExecutionOrder(1000)]
 public class MenuUIHandler : MonoBehaviour
 {
+
     private void Update()
     {
         if (Input.GetKeyDown(KeyCode.Alpha1))
