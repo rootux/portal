@@ -25,6 +25,8 @@ public class MusicManager : MonoBehaviour
     private List<int> filesPlayOrder;
     private int currentChosenFolderIndex = 0;
     private List<int> foldersPlayOrder = new();
+    private int fadeOutTimeInSeconds = 4;
+    private readonly int now = 0;
 
     void Start()
     {
@@ -52,6 +54,17 @@ public class MusicManager : MonoBehaviour
         }
         ShuffleFolders();
         PlayNextFolder();
+    }
+
+    void StartFadeOut()
+    {
+        StartCoroutine(FadeOut(source, fadeOutTimeInSeconds));
+
+    }
+
+    void StartFadeIn()
+    {
+        StartCoroutine(FadeIn(source, fadeOutTimeInSeconds));
     }
 
     void PlayNextFolder()
@@ -124,8 +137,10 @@ public class MusicManager : MonoBehaviour
             Debug.LogError(webRequest.error);
         }
         else
-        {
+        {            
             AudioClip clip = DownloadHandlerAudioClip.GetContent(webRequest);
+            Invoke(nameof(StartFadeOut), clip.length - fadeOutTimeInSeconds);
+            Invoke(nameof(StartFadeIn), clip.length);
             clip.name = fileName;
             audioClips.Add(clip);
             PlayNext(clip);
@@ -150,6 +165,29 @@ public class MusicManager : MonoBehaviour
             var r = Random.Range(t, array.Count);
             array[t] = array[r];
             array[r] = tmp;
+        }
+    }
+
+    public static IEnumerator FadeOut(AudioSource audioSource, float FadeTime)
+    {
+        float startVolume = audioSource.volume;
+        while (audioSource.volume > 0.1)
+        {
+            audioSource.volume -= startVolume * Time.deltaTime / FadeTime;
+            yield return null;
+        }
+    }
+
+    public static IEnumerator FadeIn(AudioSource audioSource, float FadeTime)
+    {
+        Debug.Log("started fade in");
+        audioSource.volume = 0f;
+        while (audioSource.volume < 1)
+        {
+            audioSource.volume += Time.deltaTime / FadeTime;
+            Debug.Log(audioSource.volume);
+
+            yield return null;
         }
     }
 
