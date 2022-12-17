@@ -827,7 +827,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_IsServer: 1
-  m_AdressServer: 2a06:c701:7005:dc00:6c83:9f9c:c602:70a4
+  m_AdressServer: dojo
 --- !u!1 &1844338083
 GameObject:
   m_ObjectHideFlags: 0
