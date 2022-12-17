@@ -229,7 +229,9 @@ internal class UserEventHandler : IRtcEngineEventHandler
 
     public override void OnError(int err, string msg)
     {
-        _helloVideoTokenAgora.Log.UpdateLog(string.Format("OnError err: {0}, msg: {1}", err, msg));
+        string fullError = string.Format("OnError err: {0}, msg: {1}", err, msg);
+        Debug.LogError(fullError);
+        _helloVideoTokenAgora.Log.UpdateLog(fullError);
     }
 
     public override void OnJoinChannelSuccess(RtcConnection connection, int elapsed)
