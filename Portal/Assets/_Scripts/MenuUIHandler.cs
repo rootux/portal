@@ -23,13 +23,21 @@ namespace DefaultNamespace
         
         public void StartGame() {
             Debug.Log("Starting Game...");
-            SceneManager.LoadScene(1);
+            var currentSceneIndex = SceneManager.GetActiveScene().buildIndex;
+            if (currentSceneIndex != 1)
+            {
+                SceneManager.LoadScene(1);
+            }
         }
 
         public void StartVideo()
         {
             Debug.Log("Started Video...");
-            SceneManager.LoadScene(2);
+            var currentSceneIndex = SceneManager.GetActiveScene().buildIndex;
+            if (currentSceneIndex != 2)
+            {
+                SceneManager.LoadScene(2);
+            }
         }
     }
 }

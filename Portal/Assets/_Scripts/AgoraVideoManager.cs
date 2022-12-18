@@ -12,7 +12,7 @@ namespace DefaultNamespace
     public class AgoraVideoManager : MonoBehaviour
     {
         private string _appID;
-        private uint _userId;
+        public static uint _userId;
         private string _token;
         private string _channelName;
         public Text LogText;
@@ -21,6 +21,11 @@ namespace DefaultNamespace
         public static string _channelToken = null;
         internal static string _tokenBase;
         internal CONNECTION_STATE_TYPE _state = CONNECTION_STATE_TYPE.CONNECTION_STATE_DISCONNECTED;
+        private static int widthMultiplayer = 16;
+        private static int heightMultiplayer = 9;
+        private static int frameRate;
+        private VideoDimensions videoDimensions;
+        public static VideoSurface playerVideo;
 
         private void Start()
         {
@@ -29,6 +34,8 @@ namespace DefaultNamespace
             _channelName = GlobalSettings.Instance.agoraChannelName;
             _tokenBase = GlobalSettings.Instance.agoraTokenBase;
             _userId = GlobalSettings.Instance.agoraUserId;
+            frameRate = GlobalSettings.Instance.agoraVideoFrameRate;
+            videoDimensions = new (GlobalSettings.Instance.agoraVideoWidth, GlobalSettings.Instance.agoraVideoHeight);
             if (_userId == 0)
             {
                 throw new Exception("Please set user id to something that is not 0");
@@ -110,9 +117,10 @@ namespace DefaultNamespace
         }
         
         VideoEncoderConfiguration config = new VideoEncoderConfiguration();
-        config.dimensions = new VideoDimensions(1024, 768);
-        config.frameRate = 15;
+        config.dimensions = videoDimensions;
+        config.frameRate = frameRate;
         config.bitrate = 0;
+        config.orientationMode = ORIENTATION_MODE.ORIENTATION_MODE_ADAPTIVE;
         RtcEngine.SetVideoEncoderConfiguration(config);
         RtcEngine.EnableAudio();
         RtcEngine.EnableVideo();
@@ -147,13 +155,17 @@ namespace DefaultNamespace
             VideoSurface videoSurface = MakeImageSurface(uid.ToString());
             if (!ReferenceEquals(videoSurface, null))
             {
-                // configure videoSurface
+                // configure videoSurface for self or other
                 if (uid == 0)
                 {
+                    playerVideo = videoSurface;
                     videoSurface.SetForUser(uid, channelId);
                 }
                 else
                 {
+                    // another person joined - disable our video
+                    playerVideo.Enable = false;
+                    playerVideo.GetComponent<RawImage>().color = Color.black;
                     videoSurface.SetForUser(uid, channelId, VIDEO_SOURCE_TYPE.VIDEO_SOURCE_REMOTE);
                 }
 
@@ -190,7 +202,7 @@ namespace DefaultNamespace
         }
 
         // Video TYPE 2: RawImage
-        private static VideoSurface MakeImageSurface(string goName)
+        private static VideoSurface MakeImageSurface(string uid)
         {
             GameObject go = new GameObject();
 
@@ -199,7 +211,7 @@ namespace DefaultNamespace
                 return null;
             }
 
-            go.name = goName;
+            go.name = uid;
             // to be renderered onto
             go.AddComponent<RawImage>();
             // make the object draggable
@@ -304,6 +316,13 @@ namespace DefaultNamespace
             _agoraVideoManager.Log.UpdateLog(string.Format("OnUserOffLine uid: ${0}, reason: ${1}", uid,
                 (int)reason));
             AgoraVideoManager.DestroyVideoView(uid);
+            var isAnotherUser = (uid != AgoraVideoManager._userId);
+            if (isAnotherUser)
+            {
+                // reactivate our view
+                AgoraVideoManager.playerVideo.GetComponent<RawImage>().color = Color.white;
+                AgoraVideoManager.playerVideo.Enable = true;
+            }
         }
 
         public override void OnTokenPrivilegeWillExpire(RtcConnection connection, string token)

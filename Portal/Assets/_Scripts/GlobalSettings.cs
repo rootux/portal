@@ -19,6 +19,9 @@ namespace DefaultNamespace
         public uint agoraUserId;
         public string agoraToken;
         public string agoraChannelName;
+        public int agoraVideoHeight;
+        public int agoraVideoWidth;
+        public int agoraVideoFrameRate;
 
         [field: NonSerialized()] private static readonly GlobalSettings instance = ImportSettingsFile();
 
