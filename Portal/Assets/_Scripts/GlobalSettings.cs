@@ -15,6 +15,8 @@ namespace DefaultNamespace
         public string[] musicFoldersArray;
         public string serverStaticIp;
         public string agoraAppId;
+        public string agoraTokenBase;
+        public uint agoraUserId;
         public string agoraToken;
         public string agoraChannelName;
 
