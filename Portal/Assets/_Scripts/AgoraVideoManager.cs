@@ -78,7 +78,7 @@ namespace DefaultNamespace
             return Log.DebugAssert(_appID.Length > 10,
                 "Please fill in your appId in API-Example/profile/appIdInput.asset");
         }
-
+        
         private void InitEngine()
         {
             RtcEngine = Agora.Rtc.RtcEngine.CreateAgoraRtcEngine();
@@ -90,19 +90,23 @@ namespace DefaultNamespace
             RtcEngine.InitEventHandler(handler);
         }
 
-        private void JoinChannel()
+    private void JoinChannel()
+    {
+        RtcEngine.SetClientRole(CLIENT_ROLE_TYPE.CLIENT_ROLE_BROADCASTER);
+        if (_channelToken.Length == 0)
         {
-            RtcEngine.SetClientRole(CLIENT_ROLE_TYPE.CLIENT_ROLE_BROADCASTER);
-            RtcEngine.EnableAudio();
-            RtcEngine.EnableVideo();
-
-            if (_channelToken.Length == 0)
-            {
-                StartCoroutine(HelperClass.FetchToken(_tokenBase, _channelName, 0, this.RenewOrJoinToken));
-                return;
-            }
-
-            RtcEngine.JoinChannel(_channelToken, _channelName, "");
+            StartCoroutine(HelperClass.FetchToken(_tokenBase, _channelName, 0, this.RenewOrJoinToken));
+            return;
+        }
+        
+        VideoEncoderConfiguration config = new VideoEncoderConfiguration();
+        config.dimensions = new VideoDimensions(1024, 768);
+        config.frameRate = 15;
+        config.bitrate = 0;
+        RtcEngine.SetVideoEncoderConfiguration(config);
+        RtcEngine.EnableAudio();
+        RtcEngine.EnableVideo();
+        RtcEngine.JoinChannel(_channelToken, _channelName, "");
         }
 
         private void OnDestroy()

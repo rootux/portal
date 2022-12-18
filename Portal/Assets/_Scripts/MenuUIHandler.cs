@@ -1,6 +1,3 @@
-using System;
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
@@ -18,17 +15,13 @@ namespace DefaultNamespace
             {
                 StartGame();
             }
-            else if (Input.GetKeyDown(KeyCode.Alpha2))
+            else if (Input.GetKeyDown(KeyCode.Alpha3))
             {
                 StartVideo();
-            }else if (Input.GetKeyDown(KeyCode.Alpha3))
-            {
-                StartSharing();
             }
         }
         
-        public void StartGame()
-        {
+        public void StartGame() {
             Debug.Log("Starting Game...");
             SceneManager.LoadScene(1);
         }
@@ -37,12 +30,6 @@ namespace DefaultNamespace
         {
             Debug.Log("Started Video...");
             SceneManager.LoadScene(2);
-        }
-
-        public void StartSharing()
-        {
-            Debug.Log("Starting Sharing...");
-            SceneManager.LoadScene(3);
         }
     }
 }

@@ -17,15 +17,15 @@ namespace Agora_RTC_Plugin.API_Example.Examples.Basic.JoinChannelVideo
         [Header("_____________Basic Configuration_____________")]
         [FormerlySerializedAs("APP_ID")]
         [SerializeField]
-        private string _appID = "";
+        private string _appID = "6cb2896f463a48849fdbfb390269d341";
 
         [FormerlySerializedAs("TOKEN")]
         [SerializeField]
-        private string _token = "";
+        private string _token = "007eJxTYLC+tiBOS3x9eH7xgo9B3uJLwnf/LjV5/mlymTF3omBEYI4Cg1lykpGFpVmaiZlxoomFhYllWkpSWpKxpYGRmWWKsYnhBrX5yQ2BjAw7pE+wMDJAIIjPxlCQX1SSmMPAAAAreB7s";
 
         [FormerlySerializedAs("CHANNEL_NAME")]
         [SerializeField]
-        private string _channelName = "";
+        private string _channelName = "portal";
 
         public Text LogText;
         internal Logger Log;
