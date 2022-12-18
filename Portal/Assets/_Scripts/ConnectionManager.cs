@@ -4,52 +4,57 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using FishNet.Managing;
-using Newtonsoft.Json;
+//using Newtonsoft.Json;
 using FishNet.Transporting;
 
-public class ConnectionManager : MonoBehaviour
+namespace DefaultNamespace
 {
-    private NetworkManager m_NetworkManager;
-    [SerializeField] private bool m_IsServer = false;
-    [SerializeField] private string m_AdressServer = "";
-
-    private void Start()
+    public class ConnectionManager : MonoBehaviour
     {
-        m_AdressServer = GlobalSettings.Instance.serverStaticIp;
-        m_IsServer = GlobalSettings.Instance.isServer;
-        
-        m_NetworkManager = GetComponent<NetworkManager>();
-        
-        //JsonConverter
+        private NetworkManager m_NetworkManager;
+        [SerializeField] private bool m_IsServer = false;
+        [SerializeField] private string m_AdressServer = "";
 
-        m_NetworkManager.ClientManager.OnClientConnectionState += Test;
-        connect();
-    }
-
-    private void connect()
-    {
-        if (m_IsServer == true)
+        private void Start()
         {
-            m_NetworkManager.ServerManager.StartConnection();
-            m_NetworkManager.ClientManager.StartConnection();
-        }
-        else
-        {
-            m_NetworkManager.ClientManager.StartConnection(m_AdressServer);
-        }
-    }
+            m_AdressServer = GlobalSettings.Instance.serverStaticIp;
+            m_IsServer = GlobalSettings.Instance.isServer;
+            bool shouldShowServerHud = GlobalSettings.Instance.isDebug;
+            GameObject.FindWithTag("Stats").SetActive(shouldShowServerHud);
+            m_NetworkManager = GetComponent<NetworkManager>();
 
-    private void Update()
-    {
-        //if(m_NetworkManager.ClientManager.Started)
-    }
+            //JsonConverter
 
-    public void Test(ClientConnectionStateArgs args)
-    {
-        if(args.ConnectionState == LocalConnectionState.Stopped)
-        {
+            m_NetworkManager.ClientManager.OnClientConnectionState += Test;
             connect();
         }
-        Debug.Log(args.ConnectionState);
+
+        private void connect()
+        {
+            if (m_IsServer == true)
+            {
+                m_NetworkManager.ServerManager.StartConnection();
+                m_NetworkManager.ClientManager.StartConnection();
+            }
+            else
+            {
+                m_NetworkManager.ClientManager.StartConnection(m_AdressServer);
+            }
+        }
+
+        private void Update()
+        {
+            //if(m_NetworkManager.ClientManager.Started)
+        }
+
+        public void Test(ClientConnectionStateArgs args)
+        {
+            if (args.ConnectionState == LocalConnectionState.Stopped)
+            {
+                connect();
+            }
+
+            Debug.Log(args.ConnectionState);
+        }
     }
 }
