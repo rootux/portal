@@ -1,8 +1,9 @@
 {
+  "isDebug": "true",
   "isServer": "true",
   "musicFoldersArray": ["folder1", "folder2"],
   "serverStaticIp": "dojo",
   "agoraAppId": "6cb2896f463a48849fdbfb390269d341",
-  "agoraToken": "007eJxTYNi2Vyau+qnsXbYwg4D1Ej1lQpO1o1o0881e/Dz/f018k7YCg1lykpGFpVmaiZlxoomFhYllWkpSWpKxpYGRmWWKsYmh1N05yQ2BjAzOWekMjFAI4rMxFOQXlSTmMDAAACjWHtA=",
+  "agoraToken": "007eJxTYLC+tiBOS3x9eH7xgo9B3uJLwnf/LjV5/mlymTF3omBEYI4Cg1lykpGFpVmaiZlxoomFhYllWkpSWpKxpYGRmWWKsYnhBrX5yQ2BjAw7pE+wMDJAIIjPxlCQX1SSmMPAAAAreB7s",
   "agoraChannelName": "portal"
 }
