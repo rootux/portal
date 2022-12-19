@@ -52,9 +52,9 @@ MonoBehaviour:
   uiBounds:
     serializedVersion: 2
     x: 1014
-    y: -666
-    width: 3386
-    height: 2912
+    y: -667
+    width: 2042
+    height: 2913
 --- !u!114 &114350483966674976
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -3798,8 +3798,8 @@ MonoBehaviour:
   - {fileID: 8926484042661615333}
   - {fileID: 8926484042661615335}
   dataType: 1
-  capacity: 131072
-  stripCapacity: 512
+  capacity: 102400
+  stripCapacity: 400
   particlePerStripCount: 256
   needsComputeBounds: 0
   boundsMode: 1
@@ -6456,7 +6456,7 @@ MonoBehaviour:
   - {fileID: 8926484042661615616}
   m_ExposedName: VelocityMap 1
   m_Exposed: 1
-  m_Order: 5
+  m_Order: 6
   m_Category: 
   m_Min:
     m_Type:
@@ -6528,7 +6528,7 @@ MonoBehaviour:
   - {fileID: 8926484042661615618}
   m_ExposedName: Color1 1
   m_Exposed: 1
-  m_Order: 5
+  m_Order: 7
   m_Category: 
   m_Min:
     m_Type:
@@ -6600,7 +6600,7 @@ MonoBehaviour:
   - {fileID: 8926484042661615620}
   m_ExposedName: Color2 1
   m_Exposed: 1
-  m_Order: 5
+  m_Order: 8
   m_Category: 
   m_Min:
     m_Type:
@@ -6672,7 +6672,7 @@ MonoBehaviour:
   - {fileID: 8926484042661615622}
   m_ExposedName: Amount
   m_Exposed: 1
-  m_Order: 5
+  m_Order: 9
   m_Category: 
   m_Min:
     m_Type:
@@ -6744,7 +6744,7 @@ MonoBehaviour:
   - {fileID: 8926484042661615624}
   m_ExposedName: LifeTime 1
   m_Exposed: 1
-  m_Order: 5
+  m_Order: 10
   m_Category: 
   m_Min:
     m_Type:
