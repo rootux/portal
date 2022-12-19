@@ -7,14 +7,14 @@ using UnityEngine;
 using UnityEngine.Networking;
 using Random = UnityEngine.Random;
 
-namespace DefaultNamespace { 
-    /**
-     * Shuffles music folders
-     * Pick Next folder
-     * Shuffle the files
-     * Play them one after the other
-     * And Repeat the process
-     */
+/**
+ * Shuffles music folders
+ * Pick Next folder
+ * Shuffle the files
+ * Play them one after the other
+ * And Repeat the process
+ */
+namespace DefaultNamespace {
     public class MusicManager : MonoBehaviour
     {
         private string[] mp3Directories;
@@ -26,7 +26,6 @@ namespace DefaultNamespace {
         private List<int> filesPlayOrder;
         private int currentChosenFolderIndex = 0;
         private List<int> foldersPlayOrder = new();
-        private int fadeOutTimeInSeconds = 4;
         private readonly int now = 0;
 
         void Start()
@@ -60,17 +59,6 @@ namespace DefaultNamespace {
             ShuffleFolders();
             PlayNextFolder();
         }
-        
-        void StartFadeOut()
-        {
-            StartCoroutine(FadeOut(source, fadeOutTimeInSeconds));
-
-        }
-
-        void StartFadeIn()
-        {
-            StartCoroutine(FadeIn(source, fadeOutTimeInSeconds));
-        }
 
         void PlayNextFolder()
         {
@@ -101,7 +89,7 @@ namespace DefaultNamespace {
         private void ShuffleSongsInFolder()
         {
             Debug.Log("Playing next random");
-            chosenFolderFiles = GetAllMp3InDirectory(chosenFolder);
+            chosenFolderFiles = GetAllOggInDirectory(chosenFolder);
             filesPlayOrder = Enumerable.Range(0, chosenFolderFiles.Length).ToList();
             KnuthShuffleArray(filesPlayOrder);
         }
@@ -121,10 +109,10 @@ namespace DefaultNamespace {
             StartCoroutine(PlayAudio(fileToPlay.FullName, fileToPlay.Name, currentPlaylist));
         }
 
-        FileInfo[] GetAllMp3InDirectory(string path)
+        FileInfo[] GetAllOggInDirectory(string path)
         {
             DirectoryInfo dir = new DirectoryInfo(path);
-            return dir.GetFiles("*.mp3");
+            return dir.GetFiles("*.ogg");
         }
 
         IEnumerator PlayAudio(string fullFilePath, string fileName, List<AudioClip> audioClips)
@@ -136,23 +124,11 @@ namespace DefaultNamespace {
             }
 
             Debug.Log("Loading " + fullFilePath);
-            UnityWebRequest webRequest =
-                UnityWebRequestMultimedia.GetAudioClip("file://" + fullFilePath, AudioType.MPEG);
-            yield return webRequest.SendWebRequest();
-            if (webRequest.result == UnityWebRequest.Result.ConnectionError)
-            {
-                Debug.LogError("Cant play music");
-                Debug.LogError(webRequest.error);
-            }
-            else
-            {
-                AudioClip clip = DownloadHandlerAudioClip.GetContent(webRequest);
-                Invoke(nameof(StartFadeOut), clip.length - fadeOutTimeInSeconds);
-                Invoke(nameof(StartFadeIn), clip.length);
-                clip.name = fileName;
-                audioClips.Add(clip);
-                PlayNext(clip);
-            }
+            WWW audioLoader = new WWW ("file://" + fullFilePath);
+            AudioClip clip = audioLoader.GetAudioClip (false, true, AudioType.OGGVORBIS);
+            clip.name = fileName;
+            audioClips.Add(clip);
+            PlayNext(clip);
         }
 
         private void PlayNext(AudioClip clip)
@@ -163,28 +139,6 @@ namespace DefaultNamespace {
             // Play another random - upon song finished playing
             Debug.Log("Playing another song in " + clip.length + "Time");
             Invoke(nameof(PlayRandomSong), clip.length);
-        }
-        
-        public static IEnumerator FadeOut(AudioSource audioSource, float FadeTime)
-        {
-            float startVolume = audioSource.volume;
-            while (audioSource.volume > 0.1)
-            {
-                audioSource.volume -= startVolume * Time.deltaTime / FadeTime;
-                yield return null;
-            }
-        }
-
-        public static IEnumerator FadeIn(AudioSource audioSource, float FadeTime)
-        {
-            audioSource.volume = 0f;
-            while (audioSource.volume < 1)
-            {
-                audioSource.volume += Time.deltaTime / FadeTime;
-                Debug.Log(audioSource.volume);
-
-                yield return null;
-            }
         }
 
         void KnuthShuffleArray(List<int> array)
