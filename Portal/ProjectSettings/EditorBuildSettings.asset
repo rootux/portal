@@ -9,8 +9,8 @@ EditorBuildSettings:
     path: Assets/_Scenes/Portal/PortalMenu.unity
     guid: d23d59905ac5645468dd8e5c0251903a
   - enabled: 1
-    path: Assets/_Scenes/NewKarate.unity
-    guid: fba87729578e3524bb934c835fb4b167
+    path: Assets/_Scenes/NewKarate_Dean.unity
+    guid: 02032a03dd90ad848961c83463759471
   - enabled: 1
     path: Assets/_Scenes/Video.unity
     guid: 9fb2dbd85c4f9f04ba5cdb4e28497d19

@@ -1,0 +1,147 @@
+fileFormatVersion: 2
+guid: 4946812bb51dfab408a4aa06005387a8
+timeCreated: 1433526572
+licenseType: Store
+ModelImporter:
+  serializedVersion: 18
+  fileIDToRecycleName:
+    100000: //RootNode
+    100002: mushroom_small00
+    100004: mushroom_small001
+    100006: mushroom_small002
+    100008: mushroom_small003
+    100010: mushroom_small004
+    100012: mushroom_small005
+    100014: mushroom_small006
+    100016: mushroom_small007
+    100018: mushroom_small008
+    100020: mushroom_small009
+    100022: mushroom_small010
+    100024: mushroom_small011
+    100026: mushroom_small012
+    100028: mushroom_small013
+    100030: mushroom_small014
+    100032: mushroom_small015
+    400000: //RootNode
+    400002: mushroom_small00
+    400004: mushroom_small001
+    400006: mushroom_small002
+    400008: mushroom_small003
+    400010: mushroom_small004
+    400012: mushroom_small005
+    400014: mushroom_small006
+    400016: mushroom_small007
+    400018: mushroom_small008
+    400020: mushroom_small009
+    400022: mushroom_small010
+    400024: mushroom_small011
+    400026: mushroom_small012
+    400028: mushroom_small013
+    400030: mushroom_small014
+    400032: mushroom_small015
+    2300000: mushroom_small00
+    2300002: mushroom_small001
+    2300004: mushroom_small002
+    2300006: mushroom_small003
+    2300008: mushroom_small004
+    2300010: mushroom_small005
+    2300012: mushroom_small006
+    2300014: mushroom_small007
+    2300016: mushroom_small008
+    2300018: mushroom_small009
+    2300020: mushroom_small010
+    2300022: mushroom_small011
+    2300024: mushroom_small012
+    2300026: mushroom_small013
+    2300028: mushroom_small014
+    2300030: mushroom_small015
+    3300000: mushroom_small00
+    3300002: mushroom_small001
+    3300004: mushroom_small002
+    3300006: mushroom_small003
+    3300008: mushroom_small004
+    3300010: mushroom_small005
+    3300012: mushroom_small006
+    3300014: mushroom_small007
+    3300016: mushroom_small008
+    3300018: mushroom_small009
+    3300020: mushroom_small010
+    3300022: mushroom_small011
+    3300024: mushroom_small012
+    3300026: mushroom_small013
+    3300028: mushroom_small014
+    3300030: mushroom_small015
+    4300000: mushroom_small00
+    4300002: mushroom_small001
+    4300004: mushroom_small002
+    4300006: mushroom_small003
+    4300008: mushroom_small004
+    4300010: mushroom_small005
+    4300012: mushroom_small006
+    4300014: mushroom_small007
+    4300016: mushroom_small008
+    4300018: mushroom_small009
+    4300020: mushroom_small010
+    4300022: mushroom_small011
+    4300024: mushroom_small012
+    4300026: mushroom_small013
+    4300028: mushroom_small014
+    4300030: mushroom_small015
+  materials:
+    importMaterials: 0
+    materialName: 0
+    materialSearch: 1
+  animations:
+    legacyGenerateAnimations: 4
+    bakeSimulation: 0
+    optimizeGameObjects: 0
+    motionNodeName: 
+    animationCompression: 1
+    animationRotationError: .5
+    animationPositionError: .5
+    animationScaleError: .5
+    animationWrapMode: 0
+    extraExposedTransformPaths: []
+    clipAnimations: []
+    isReadable: 1
+  meshes:
+    lODScreenPercentages: []
+    globalScale: 40
+    meshCompression: 0
+    addColliders: 0
+    importBlendShapes: 1
+    swapUVChannels: 0
+    generateSecondaryUV: 0
+    useFileUnits: 1
+    optimizeMeshForGPU: 1
+    keepQuads: 0
+    weldVertices: 1
+    secondaryUVAngleDistortion: 8
+    secondaryUVAreaDistortion: 15.000001
+    secondaryUVHardAngle: 88
+    secondaryUVPackMargin: 4
+    useFileScale: 1
+  tangentSpace:
+    normalSmoothAngle: 12
+    splitTangentsAcrossUV: 1
+    normalImportMode: 0
+    tangentImportMode: 0
+  importAnimation: 1
+  copyAvatar: 0
+  humanDescription:
+    human: []
+    skeleton: []
+    armTwist: .5
+    foreArmTwist: .5
+    upperLegTwist: .5
+    legTwist: .5
+    armStretch: .0500000007
+    legStretch: .0500000007
+    feetSpacing: 0
+    rootMotionBoneName: 
+  lastHumanDescriptionAvatarSource: {instanceID: 0}
+  animationType: 0
+  additionalBone: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
