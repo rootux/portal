@@ -28,7 +28,10 @@ namespace Agora_RTC_Plugin.API_Example.Examples.Advanced.DeviceManager
         private DeviceInfo[] _audioRecordingDeviceInfos;
         private DeviceInfo[] _audioPlaybackDeviceInfos;
         private DeviceInfo[] _videoDeviceInfos;
-        private const int DEVICE_INDEX = 0;
+        private const int VIDEO_DEVICE_INDEX = 0;
+        private const int AUDIO_REC_DEVICE_INDEX = 1;
+        private const int AUDIO_PLAY_DEVICE_INDEX = 1;
+
 
         // Start is called before the first frame update
         private void Start()
@@ -128,12 +131,12 @@ namespace Agora_RTC_Plugin.API_Example.Examples.Advanced.DeviceManager
         private void SetCurrentDevice()
         {
             if (_audioDeviceManager != null && _audioRecordingDeviceInfos.Length > 0)
-                _audioDeviceManager.SetRecordingDevice(_audioRecordingDeviceInfos[DEVICE_INDEX].deviceId);
+                _audioDeviceManager.SetRecordingDevice(_audioRecordingDeviceInfos[AUDIO_REC_DEVICE_INDEX].deviceId);
             if (_audioDeviceManager != null && _audioPlaybackDeviceInfos.Length > 0)
-                _audioDeviceManager.SetPlaybackDevice(_audioPlaybackDeviceInfos[DEVICE_INDEX].deviceId);
+                _audioDeviceManager.SetPlaybackDevice(_audioPlaybackDeviceInfos[AUDIO_PLAY_DEVICE_INDEX].deviceId);
             if (_videoDeviceManager != null && _videoDeviceInfos.Length > 0)
             {
-                var ret = _videoDeviceManager.SetDevice(_videoDeviceInfos[DEVICE_INDEX].deviceId);
+                var ret = _videoDeviceManager.SetDevice(_videoDeviceInfos[VIDEO_DEVICE_INDEX].deviceId);
                 Debug.Log("SetDevice returns: " + ret);
             }
         }
