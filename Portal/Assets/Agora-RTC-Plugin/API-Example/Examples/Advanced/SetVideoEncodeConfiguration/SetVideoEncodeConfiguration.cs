@@ -13,18 +13,11 @@ namespace Agora_RTC_Plugin.API_Example.Examples.Advanced.SetVideoEncodeConfigura
         [SerializeField]
         private AppIdInput _appIdInput;
 
-        [Header("_____________Basic Configuration_____________")]
-        [FormerlySerializedAs("APP_ID")]
-        [SerializeField]
-        private string _appID = "";
-
-        [FormerlySerializedAs("TOKEN")]
-        [SerializeField]
-        private string _token = "";
-
-        [FormerlySerializedAs("CHANNEL_NAME")]
-        [SerializeField]
-        private string _channelName = "";
+        private string _appID = "6cb2896f463a48849fdbfb390269d341";
+        
+        private string _token = "0066cb2896f463a48849fdbfb390269d341IADdmOk/K091F65rAJlGzV9kNtfiDGZ2y78YWlWi0N4UCvCTrgu379yDEAB/9ZoFG6uhYwEAAQDb16Vj";
+        
+        private string _channelName = "portal";
 
         public Text LogText;
         internal Logger Log;
@@ -61,7 +54,8 @@ namespace Agora_RTC_Plugin.API_Example.Examples.Advanced.SetVideoEncodeConfigura
         private bool CheckAppId()
         {
             Log = new Logger(LogText);
-            return Log.DebugAssert(_appID.Length > 10, "Please fill in your appId in API-Example/profile/appIdInput.asset");
+            return true;
+            // return Log.DebugAssert(_appID.Length > 10, "Please fill in your appId in API-Example/profile/appIdInput.asset");
         }
 
         //Show data in AgoraBasicProfile

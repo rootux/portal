@@ -2,6 +2,7 @@
   "isDebug": true,
   "isServer": false,
   "musicFoldersArray": ["sad", "happy", "psychedelic"],
+  "musicPath": "c:\\portal-music\\",
   "serverStaticIp": "dojo",
   "agoraUserId": 1,
   "agoraVideoWidth": 1024,
