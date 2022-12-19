@@ -8,10 +8,10 @@ namespace Agora.Rtc
     internal class TextureManager : MonoBehaviour
     {
         // texture identity
-        private int _videoPixelWidth = 0;
-        private int _videoPixelHeight = 0;
-        private uint _uid = 0;
-        private string _channelId = "";
+        private int _videoPixelWidth;
+        private int _videoPixelHeight;
+        private uint _uid;
+        private string _channelId;
         private VIDEO_SOURCE_TYPE _sourceType = VIDEO_SOURCE_TYPE.VIDEO_SOURCE_CAMERA_PRIMARY;
 
         private bool _needResize = false;

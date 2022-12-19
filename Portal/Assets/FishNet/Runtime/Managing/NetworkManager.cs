@@ -219,8 +219,6 @@ namespace FishNet.Managing
         #endregion
 
 
-        [SerializeField] private bool _isServer = false;
-
         private void Awake()
         {
             InitializeLogging();
