@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
@@ -8,6 +9,10 @@ namespace DefaultNamespace
     [DefaultExecutionOrder(1000)]
     public class MenuUIHandler : MonoBehaviour
     {
+        private void Start()
+        {
+            Cursor.visible = false; 
+        }
 
         private void Update()
         {
