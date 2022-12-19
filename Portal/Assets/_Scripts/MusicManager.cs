@@ -7,19 +7,19 @@ using UnityEngine;
 using UnityEngine.Networking;
 using Random = UnityEngine.Random;
 
-/**
- * Shuffles music folders
- * Pick Next folder
- * Shuffle the files
- * Play them one after the other
- * And Repeat the process
- */
-namespace DefaultNamespace {
+namespace DefaultNamespace { 
+    /**
+     * Shuffles music folders
+     * Pick Next folder
+     * Shuffle the files
+     * Play them one after the other
+     * And Repeat the process
+     */
     public class MusicManager : MonoBehaviour
     {
-        [SerializeField] private List<string> mp3Directories;
+        private string[] mp3Directories;
         private List<AudioClip> currentPlaylist = new();
-        private string musicRootPath = "music";
+        private string musicRootPath;
         private AudioSource source;
         private string chosenFolder;
         private FileInfo[] chosenFolderFiles;
@@ -31,15 +31,17 @@ namespace DefaultNamespace {
 
         void Start()
         {
+            mp3Directories = GlobalSettings.Instance.musicFoldersArray;
+            musicRootPath = GlobalSettings.Instance.musicPath;
             source = GetComponent<AudioSource>();
-            Debug.Log("Loading music from " + Application.dataPath);
+            Debug.Log("Loading music from " + musicRootPath);
             InitMusic();
         }
 
         void InitMusic()
         {
             Debug.Log("Init Music");
-            if (mp3Directories.Count <= 0)
+            if (mp3Directories.Length <= 0)
             {
                 Debug.LogError("Please set mp3 directories names for sound to play");
                 return;
@@ -47,7 +49,7 @@ namespace DefaultNamespace {
 
             foreach (var dir in mp3Directories)
             {
-                var fullDir = chosenFolder = Path.Combine(Application.dataPath, musicRootPath, dir);
+                var fullDir = chosenFolder = Path.Combine(musicRootPath, dir);
                 if (!Directory.Exists(fullDir))
                 {
                     Debug.LogError("Cant play music - directory " + fullDir + " does not exists");
@@ -79,20 +81,20 @@ namespace DefaultNamespace {
 
         private void ShuffleFolders()
         {
-            foldersPlayOrder = Enumerable.Range(0, mp3Directories.Count).ToList();
+            foldersPlayOrder = Enumerable.Range(0, mp3Directories.Length).ToList();
             KnuthShuffleArray(foldersPlayOrder);
         }
 
         private void PickNextFolder()
         {
-            var isFinishedLoopingAllFolder = (currentChosenFolderIndex == mp3Directories.Count);
+            var isFinishedLoopingAllFolder = (currentChosenFolderIndex == mp3Directories.Length);
             if (isFinishedLoopingAllFolder)
             {
                 currentChosenFolderIndex = 0;
             }
 
             var folderIndexToPlay = foldersPlayOrder[currentChosenFolderIndex++];
-            chosenFolder = Path.Combine(Application.dataPath, musicRootPath, mp3Directories[folderIndexToPlay]);
+            chosenFolder = Path.Combine(musicRootPath, mp3Directories[folderIndexToPlay]);
             Debug.Log("Chosen " + chosenFolder + " music");
         }
 

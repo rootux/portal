@@ -12,6 +12,7 @@ namespace DefaultNamespace
     {
         public bool isDebug;
         public bool isServer;
+        public string musicPath;
         public string[] musicFoldersArray;
         public string serverStaticIp;
         public string agoraAppId;
