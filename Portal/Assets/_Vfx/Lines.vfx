@@ -52,9 +52,9 @@ MonoBehaviour:
   uiBounds:
     serializedVersion: 2
     x: 1014
-    y: -666
+    y: -667
     width: 2042
-    height: 2912
+    height: 2913
 --- !u!114 &114350483966674976
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -3724,8 +3724,8 @@ MonoBehaviour:
   - {fileID: 8926484042661615333}
   - {fileID: 8926484042661615335}
   dataType: 1
-  capacity: 131072
-  stripCapacity: 512
+  capacity: 102400
+  stripCapacity: 400
   particlePerStripCount: 256
   needsComputeBounds: 0
   boundsMode: 1

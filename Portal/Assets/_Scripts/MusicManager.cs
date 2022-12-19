@@ -5,6 +5,7 @@ using System.IO;
 using System.Linq;
 using UnityEngine;
 using UnityEngine.Networking;
+using UnityEngine.SceneManagement;
 using Random = UnityEngine.Random;
 
 /**
@@ -26,19 +27,50 @@ namespace DefaultNamespace {
         private List<int> filesPlayOrder;
         private int currentChosenFolderIndex = 0;
         private List<int> foldersPlayOrder = new();
-        private readonly int now = 0;
+
+        private static MusicManager instance = null;
+
+        private void Awake()
+        {
+            if (instance == null)
+            {
+                Debug.Log("Dont destroy");
+                instance = this;
+                DontDestroyOnLoad(this);
+                SceneManager.sceneLoaded += OnSceneLoaded;
+            }
+            else
+            {
+                Debug.Log("Not init music player - destroy");
+                DestroyImmediate(this.gameObject);
+            }
+        }
+
+        private void OnSceneLoaded(Scene scene, LoadSceneMode loadSceneMode)
+        {
+            Debug.Log("MuscPlayer: OnSceneLoaded");
+            source = GetComponent<AudioSource>();
+            if (scene.name == "Video")
+            {
+                source.volume = 0.2f;
+            }
+            else
+            {
+                source.volume = 1.0f;
+            }
+        }
 
         void Start()
         {
-            mp3Directories = GlobalSettings.Instance.musicFoldersArray;
-            musicRootPath = GlobalSettings.Instance.musicPath;
             source = GetComponent<AudioSource>();
-            Debug.Log("Loading music from " + musicRootPath);
             InitMusic();
         }
 
         void InitMusic()
         {
+            Debug.Log("Loading music from " + musicRootPath);
+            mp3Directories = GlobalSettings.Instance.musicFoldersArray;
+            musicRootPath = GlobalSettings.Instance.musicPath;
             Debug.Log("Init Music");
             if (mp3Directories.Length <= 0)
             {
@@ -152,4 +184,4 @@ namespace DefaultNamespace {
             }
         }
     }
-}
+    }
