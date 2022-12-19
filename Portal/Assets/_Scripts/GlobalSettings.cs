@@ -45,6 +45,7 @@ namespace DefaultNamespace
         private static GlobalSettings ImportSettingsFile(string filePath = "settings")
         {
             var fullPath = Path.Combine(Application.persistentDataPath, filePath + ".json");
+            Debug.Log("Trying to load from : " + fullPath);
             if (File.Exists(fullPath))
             {
                 Debug.LogWarning("Found settings file in: " + fullPath);
@@ -64,6 +65,7 @@ namespace DefaultNamespace
             TextAsset textAsset = Resources.Load<TextAsset>(filePath);
             Debug.Log(filePath);
             Debug.Log(textAsset);
+            
             return JsonUtility.FromJson<GlobalSettings>(textAsset.text);
         }
 
