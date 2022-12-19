@@ -26,6 +26,8 @@ namespace DefaultNamespace {
         private List<int> filesPlayOrder;
         private int currentChosenFolderIndex = 0;
         private List<int> foldersPlayOrder = new();
+        private int fadeOutTimeInSeconds = 4;
+        private readonly int now = 0;
 
         void Start()
         {
@@ -55,6 +57,17 @@ namespace DefaultNamespace {
 
             ShuffleFolders();
             PlayNextFolder();
+        }
+        
+        void StartFadeOut()
+        {
+            StartCoroutine(FadeOut(source, fadeOutTimeInSeconds));
+
+        }
+
+        void StartFadeIn()
+        {
+            StartCoroutine(FadeIn(source, fadeOutTimeInSeconds));
         }
 
         void PlayNextFolder()
@@ -132,6 +145,8 @@ namespace DefaultNamespace {
             else
             {
                 AudioClip clip = DownloadHandlerAudioClip.GetContent(webRequest);
+                Invoke(nameof(StartFadeOut), clip.length - fadeOutTimeInSeconds);
+                Invoke(nameof(StartFadeIn), clip.length);
                 clip.name = fileName;
                 audioClips.Add(clip);
                 PlayNext(clip);
@@ -146,6 +161,28 @@ namespace DefaultNamespace {
             // Play another random - upon song finished playing
             Debug.Log("Playing another song in " + clip.length + "Time");
             Invoke(nameof(PlayRandomSong), clip.length);
+        }
+        
+        public static IEnumerator FadeOut(AudioSource audioSource, float FadeTime)
+        {
+            float startVolume = audioSource.volume;
+            while (audioSource.volume > 0.1)
+            {
+                audioSource.volume -= startVolume * Time.deltaTime / FadeTime;
+                yield return null;
+            }
+        }
+
+        public static IEnumerator FadeIn(AudioSource audioSource, float FadeTime)
+        {
+            audioSource.volume = 0f;
+            while (audioSource.volume < 1)
+            {
+                audioSource.volume += Time.deltaTime / FadeTime;
+                Debug.Log(audioSource.volume);
+
+                yield return null;
+            }
         }
 
         void KnuthShuffleArray(List<int> array)
