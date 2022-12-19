@@ -9,22 +9,14 @@ namespace Agora_RTC_Plugin.API_Example.Examples.Advanced.DeviceManager
 {
     public class DeviceManager : MonoBehaviour
     {
-        [FormerlySerializedAs("appIdInput")]
-        [SerializeField]
         private AppIdInput _appIdInput;
 
         [Header("_____________Basic Configuration_____________")]
-        [FormerlySerializedAs("APP_ID")]
-        [SerializeField]
-        private string _appID = "";
-
-        [FormerlySerializedAs("TOKEN")]
-        [SerializeField]
-        private string _token = "";
-
-        [FormerlySerializedAs("CHANNEL_NAME")]
-        [SerializeField]
-        private string _channelName = "";
+        private string _appID = "6cb2896f463a48849fdbfb390269d341";
+        
+        private string _token = "0066cb2896f463a48849fdbfb390269d341IADdmOk/K091F65rAJlGzV9kNtfiDGZ2y78YWlWi0N4UCvCTrgu379yDEAB/9ZoFG6uhYwEAAQDb16Vj";
+        
+        private string _channelName = "portal";
 
         public Text LogText;
         internal Logger Log;
@@ -36,7 +28,10 @@ namespace Agora_RTC_Plugin.API_Example.Examples.Advanced.DeviceManager
         private DeviceInfo[] _audioRecordingDeviceInfos;
         private DeviceInfo[] _audioPlaybackDeviceInfos;
         private DeviceInfo[] _videoDeviceInfos;
-        private const int DEVICE_INDEX = 0;
+        private const int VIDEO_DEVICE_INDEX = 0;
+        private const int AUDIO_REC_DEVICE_INDEX = 1;
+        private const int AUDIO_PLAY_DEVICE_INDEX = 1;
+
 
         // Start is called before the first frame update
         private void Start()
@@ -63,7 +58,8 @@ namespace Agora_RTC_Plugin.API_Example.Examples.Advanced.DeviceManager
         private bool CheckAppId()
         {
             Log = new Logger(LogText);
-            return Log.DebugAssert(_appID.Length > 10, "Please fill in your appId in API-Example/profile/appIdInput.asset");
+            return true;
+            //return Log.DebugAssert(_appID.Length > 10, "Please fill in your appId in API-Example/profile/appIdInput.asset");
         }
 
         //Show data in AgoraBasicProfile
@@ -135,12 +131,12 @@ namespace Agora_RTC_Plugin.API_Example.Examples.Advanced.DeviceManager
         private void SetCurrentDevice()
         {
             if (_audioDeviceManager != null && _audioRecordingDeviceInfos.Length > 0)
-                _audioDeviceManager.SetRecordingDevice(_audioRecordingDeviceInfos[DEVICE_INDEX].deviceId);
+                _audioDeviceManager.SetRecordingDevice(_audioRecordingDeviceInfos[AUDIO_REC_DEVICE_INDEX].deviceId);
             if (_audioDeviceManager != null && _audioPlaybackDeviceInfos.Length > 0)
-                _audioDeviceManager.SetPlaybackDevice(_audioPlaybackDeviceInfos[DEVICE_INDEX].deviceId);
+                _audioDeviceManager.SetPlaybackDevice(_audioPlaybackDeviceInfos[AUDIO_PLAY_DEVICE_INDEX].deviceId);
             if (_videoDeviceManager != null && _videoDeviceInfos.Length > 0)
             {
-                var ret = _videoDeviceManager.SetDevice(_videoDeviceInfos[DEVICE_INDEX].deviceId);
+                var ret = _videoDeviceManager.SetDevice(_videoDeviceInfos[VIDEO_DEVICE_INDEX].deviceId);
                 Debug.Log("SetDevice returns: " + ret);
             }
         }

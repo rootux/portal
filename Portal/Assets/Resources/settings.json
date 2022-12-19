@@ -1,9 +1,16 @@
 {
-  "isDebug": "true",
-  "isServer": "true",
-  "musicFoldersArray": ["folder1", "folder2"],
+  "isDebug": true,
+  "isServer": false,
+  "musicFoldersArray": ["sad", "happy", "psychedelic"],
+  "musicPath": "c:\\portal-music\\",
   "serverStaticIp": "dojo",
+  "agoraUserId": 1,
+  "agoraVideoWidth": 1024,
+  "agoraVideoHeight": 768,
+  "agoraVideoFrameRate": 30,
+  "agoraTokenBase": "https://agora-token-service-production-fe1c.up.railway.app",
   "agoraAppId": "6cb2896f463a48849fdbfb390269d341",
-  "agoraToken": "007eJxTYLC+tiBOS3x9eH7xgo9B3uJLwnf/LjV5/mlymTF3omBEYI4Cg1lykpGFpVmaiZlxoomFhYllWkpSWpKxpYGRmWWKsYnhBrX5yQ2BjAw7pE+wMDJAIIjPxlCQX1SSmMPAAAAreB7s",
+  "agoraToken": "0066cb2896f463a48849fdbfb390269d341IADdmOk/K091F65rAJlGzV9kNtfiDGZ2y78YWlWi0N4UCvCTrgu379yDEAB/9ZoFG6uhYwEAAQDb16Vj",
+  "agoraDeviceAudioPlayIndex": 0,
   "agoraChannelName": "portal"
 }

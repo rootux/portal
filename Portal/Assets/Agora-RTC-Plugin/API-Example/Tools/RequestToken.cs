@@ -13,11 +13,14 @@ namespace Agora.Util
   public static class HelperClass
   {
     public static IEnumerator FetchToken(
-        string url, string channel, int userId, Action<string> callback = null
-    ) {
-      UnityWebRequest request = UnityWebRequest.Get(string.Format(
-        "{0}/rtc/{1}/publisher/uid/{2}/", url, channel, userId
-      ));
+        string url, string channel, uint userId, Action<string> callback = null
+    )
+    {
+      string fullServerAddress = string.Format(
+        "{0}/rtc/{1}/publisher/uid/{2}/?expiry=950400", url, channel, userId
+      );
+      Debug.Log("Contacting " + fullServerAddress);
+      UnityWebRequest request = UnityWebRequest.Get(fullServerAddress);
       yield return request.SendWebRequest();
 
       if (request.isNetworkError || request.isHttpError) {
@@ -29,6 +32,7 @@ namespace Agora.Util
       TokenObject tokenInfo = JsonUtility.FromJson<TokenObject>(
         request.downloadHandler.text
       );
+      Debug.Log("Got token from the server" + request.downloadHandler.text);
 
       callback(tokenInfo.rtcToken);
     }

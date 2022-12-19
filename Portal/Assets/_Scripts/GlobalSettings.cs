@@ -12,11 +12,18 @@ namespace DefaultNamespace
     {
         public bool isDebug;
         public bool isServer;
+        public string musicPath;
         public string[] musicFoldersArray;
         public string serverStaticIp;
         public string agoraAppId;
+        public string agoraTokenBase;
+        public uint agoraUserId;
         public string agoraToken;
         public string agoraChannelName;
+        public int agoraVideoHeight;
+        public int agoraVideoWidth;
+        public int agoraVideoFrameRate;
+        public int agoraDeviceAudioPlayIndex;
 
         [field: NonSerialized()] private static readonly GlobalSettings instance = ImportSettingsFile();
 
@@ -40,6 +47,7 @@ namespace DefaultNamespace
         private static GlobalSettings ImportSettingsFile(string filePath = "settings")
         {
             var fullPath = Path.Combine(Application.persistentDataPath, filePath + ".json");
+            Debug.Log("Trying to load from : " + fullPath);
             if (File.Exists(fullPath))
             {
                 Debug.LogWarning("Found settings file in: " + fullPath);
@@ -59,6 +67,7 @@ namespace DefaultNamespace
             TextAsset textAsset = Resources.Load<TextAsset>(filePath);
             Debug.Log(filePath);
             Debug.Log(textAsset);
+            
             return JsonUtility.FromJson<GlobalSettings>(textAsset.text);
         }
 

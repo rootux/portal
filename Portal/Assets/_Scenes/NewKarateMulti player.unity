@@ -2251,7 +2251,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   isRemote: 0
   VFX: {fileID: 1641981758609118887}
-  playerIndex: 1
+  playerIndex: 5
   mirroredMovement: 1
   verticalMovement: 1
   externalRootMotion: 0
@@ -2896,7 +2896,6 @@ GameObject:
   m_Component:
   - component: {fileID: 2366332627902422242}
   - component: {fileID: 2366332627902422244}
-  - component: {fileID: 2366332627902422245}
   m_Layer: 0
   m_Name: MusicManager
   m_TagString: Untagged
@@ -3000,18 +2999,6 @@ AudioSource:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
---- !u!114 &2366332627902422245
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2366332627902422243}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 7c7efe02948dc6f42847af3ccc1a081d, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!1001 &2366332628321839438
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -3092,7 +3079,7 @@ PrefabInstance:
     - target: {fileID: 7443408887813606051, guid: 0b650fca685f2eb41a86538aa883e4c1,
         type: 3}
       propertyPath: m_IsActive
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 7443408887813606060, guid: 0b650fca685f2eb41a86538aa883e4c1,
         type: 3}
