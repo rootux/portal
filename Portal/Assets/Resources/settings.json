@@ -10,5 +10,6 @@
   "agoraTokenBase": "https://agora-token-service-production-fe1c.up.railway.app",
   "agoraAppId": "6cb2896f463a48849fdbfb390269d341",
   "agoraToken": "0066cb2896f463a48849fdbfb390269d341IADdmOk/K091F65rAJlGzV9kNtfiDGZ2y78YWlWi0N4UCvCTrgu379yDEAB/9ZoFG6uhYwEAAQDb16Vj",
+  "agoraDeviceAudioPlayIndex": 0,
   "agoraChannelName": "portal"
 }

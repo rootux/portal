@@ -27,6 +27,10 @@ namespace DefaultNamespace
         private VideoDimensions videoDimensions;
         public static VideoSurface playerVideo;
 
+        private int agoraDeviceAudioPlayIndex;
+        private IAudioDeviceManager _audioDeviceManager;
+        private DeviceInfo[] _audioPlaybackDeviceInfos;
+
         private void Start()
         {
             _appID = GlobalSettings.Instance.agoraAppId;
@@ -36,6 +40,7 @@ namespace DefaultNamespace
             _userId = GlobalSettings.Instance.agoraUserId;
             frameRate = GlobalSettings.Instance.agoraVideoFrameRate;
             videoDimensions = new (GlobalSettings.Instance.agoraVideoWidth, GlobalSettings.Instance.agoraVideoHeight);
+            agoraDeviceAudioPlayIndex = GlobalSettings.Instance.agoraDeviceAudioPlayIndex;
             if (_userId == 0)
             {
                 throw new Exception("Please set user id to something that is not 0");
@@ -49,8 +54,43 @@ namespace DefaultNamespace
             if (CheckAppId())
             {
                 InitEngine();
+                CallDeviceManagerApi();
                 JoinChannel();
             }
+        }
+
+        private void CallDeviceManagerApi()
+        {
+            GetAudioPlaybackDevice();
+            SetCurrentDevice();
+            SetCurrentDeviceVolume();
+        }
+        private void GetAudioPlaybackDevice()
+        {
+            _audioDeviceManager = RtcEngine.GetAudioDeviceManager();
+            _audioPlaybackDeviceInfos = _audioDeviceManager.EnumeratePlaybackDevices();
+            Log.UpdateLog(string.Format("AudioPlaybackDevice count: {0}", _audioPlaybackDeviceInfos.Length));
+            for (var i = 0; i < _audioPlaybackDeviceInfos.Length; i++)
+            {
+                Log.UpdateLog(string.Format("AudioPlaybackDevice device index: {0}, name: {1}, id: {2}", i,
+                    _audioPlaybackDeviceInfos[i].deviceName, _audioPlaybackDeviceInfos[i].deviceId));
+            }
+        }
+        
+        private void SetCurrentDevice()
+        {
+            if (_audioDeviceManager != null && _audioPlaybackDeviceInfos.Length > agoraDeviceAudioPlayIndex)
+            {
+                Log.UpdateLog("Settings audio device to index " + agoraDeviceAudioPlayIndex + " which is " + _audioPlaybackDeviceInfos[agoraDeviceAudioPlayIndex].deviceName);
+                _audioDeviceManager.SetPlaybackDevice(_audioPlaybackDeviceInfos[agoraDeviceAudioPlayIndex].deviceId);
+                                
+            }
+        }
+        
+        private void SetCurrentDeviceVolume()
+        {
+            if (_audioDeviceManager != null) _audioDeviceManager.SetRecordingDeviceVolume(100);
+            if (_audioDeviceManager != null) _audioDeviceManager.SetPlaybackDeviceVolume(100);
         }
 
         internal void RenewOrJoinToken(string newToken)

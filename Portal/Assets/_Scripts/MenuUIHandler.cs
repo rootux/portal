@@ -18,6 +18,9 @@ namespace DefaultNamespace
             else if (Input.GetKeyDown(KeyCode.Alpha3))
             {
                 StartVideo();
+            }else if (Input.GetKeyDown(KeyCode.Q))
+            {
+                QuitGame();
             }
         }
         
@@ -38,6 +41,14 @@ namespace DefaultNamespace
             {
                 SceneManager.LoadScene(2);
             }
+        }
+        
+        public void QuitGame()
+        {
+#if UNITY_EDITOR
+            UnityEditor.EditorApplication.isPlaying = false;
+#endif
+            Application.Quit();
         }
     }
 }
