@@ -3,8 +3,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using Agora.Rtc;
 using Agora.Util;
-using Agora_RTC_Plugin.API_Example.Examples.Advanced.SetBeautyEffectOptions;
-using Logger = Agora.Util.Logger;
+using UnityEngine.SceneManagement;
 using Object = UnityEngine.Object;
 using SceneManager = UnityEngine.SceneManagement.SceneManager;
 
@@ -14,10 +13,7 @@ namespace DefaultNamespace
     {
         private string _appID;
         public static uint _userId;
-        private string _token;
         private string _channelName;
-        public Text LogText;
-        internal Logger Log;
         internal IRtcEngine RtcEngine = null;
         public static string _channelToken = null;
         internal static string _tokenBase;
@@ -28,39 +24,68 @@ namespace DefaultNamespace
         private VideoDimensions videoDimensions;
         public static VideoSurface playerVideo;
         private int _streamId = -1;
+        public static string HERE_MESSAGE = "HERE";
 
         private int agoraDeviceAudioPlayIndex;
         private IAudioDeviceManager _audioDeviceManager;
         private DeviceInfo[] _audioPlaybackDeviceInfos;
 
+        private static AgoraVideoManager instance = null;
+        private void Awake()
+        {
+            if (instance == null)
+            {
+                Debug.Log("Agora video manager - dont destroy");
+                instance = this;
+                DontDestroyOnLoad(this);
+                SceneManager.sceneLoaded += OnSceneLoaded;
+            }
+            else
+            {
+                Debug.Log("Agora video already exists - destroy");
+                DestroyImmediate(this.gameObject);
+            }
+        }
+        
+        private void OnSceneLoaded(Scene scene, LoadSceneMode loadSceneMode)
+        {
+            Debug.Log("OnSceneLoaded" + scene.name);
+            if (scene.name == "Video")
+            {
+                EnableAudioVideo();
+            }
+            else
+            {
+                DisableAudioVideo();
+            }
+        }
+        
+
         private void Start()
         {
             _appID = GlobalSettings.Instance.agoraAppId;
-            _token = GlobalSettings.Instance.agoraToken;
             _channelName = GlobalSettings.Instance.agoraChannelName;
             _tokenBase = GlobalSettings.Instance.agoraTokenBase;
             _userId = GlobalSettings.Instance.agoraUserId;
             frameRate = GlobalSettings.Instance.agoraVideoFrameRate;
             videoDimensions = new(GlobalSettings.Instance.agoraVideoWidth, GlobalSettings.Instance.agoraVideoHeight);
             agoraDeviceAudioPlayIndex = GlobalSettings.Instance.agoraDeviceAudioPlayIndex;
+            _channelToken = GlobalSettings.Instance.agoraToken;
+
             if (_userId == 0)
             {
                 throw new Exception("Please set user id to something that is not 0");
             }
 
-            _channelToken = GlobalSettings.Instance.agoraToken;
             StartVideo();
         }
 
         public void StartVideo()
         {
-            if (CheckAppId())
-            {
-                InitEngine();
-                CallDeviceManagerApi();
-                SetBeautyEffect();
-                JoinChannel();
-            }
+            InitEngine();
+            CallDeviceManagerApi();
+            SetBeautyEffect();
+            JoinChannel();
         }
 
         private void CallDeviceManagerApi()
@@ -76,6 +101,7 @@ namespace DefaultNamespace
             beautyOptions.lighteningContrastLevel = LIGHTENING_CONTRAST_LEVEL.LIGHTENING_CONTRAST_HIGH;
 
             beautyOptions.smoothnessLevel = 1.0f;
+            beautyOptions.rednessLevel = 0.5f;
             beautyOptions.sharpnessLevel = 0.3f;
 
             RtcEngine.SetBeautyEffectOptions(true, beautyOptions);
@@ -85,10 +111,10 @@ namespace DefaultNamespace
         {
             _audioDeviceManager = RtcEngine.GetAudioDeviceManager();
             _audioPlaybackDeviceInfos = _audioDeviceManager.EnumeratePlaybackDevices();
-            Log.UpdateLog(string.Format("AudioPlaybackDevice count: {0}", _audioPlaybackDeviceInfos.Length));
+            Debug.Log(string.Format("AudioPlaybackDevice count: {0}", _audioPlaybackDeviceInfos.Length));
             for (var i = 0; i < _audioPlaybackDeviceInfos.Length; i++)
             {
-                Log.UpdateLog(string.Format("AudioPlaybackDevice device index: {0}, name: {1}, id: {2}", i,
+                Debug.Log(string.Format("AudioPlaybackDevice device index: {0}, name: {1}, id: {2}", i,
                     _audioPlaybackDeviceInfos[i].deviceName, _audioPlaybackDeviceInfos[i].deviceId));
             }
         }
@@ -97,7 +123,7 @@ namespace DefaultNamespace
         {
             if (_audioDeviceManager != null && _audioPlaybackDeviceInfos.Length > agoraDeviceAudioPlayIndex)
             {
-                Log.UpdateLog("Settings audio device to index " + agoraDeviceAudioPlayIndex + " which is " +
+                Debug.Log("Settings audio device to index " + agoraDeviceAudioPlayIndex + " which is " +
                               _audioPlaybackDeviceInfos[agoraDeviceAudioPlayIndex].deviceName);
                 _audioDeviceManager.SetPlaybackDevice(_audioPlaybackDeviceInfos[agoraDeviceAudioPlayIndex].deviceId);
 
@@ -145,19 +171,12 @@ namespace DefaultNamespace
             RtcEngine.RenewToken(AgoraVideoManager._channelToken);
         }
 
-        private bool CheckAppId()
-        {
-            Log = new Logger(LogText);
-            return Log.DebugAssert(_appID.Length > 10,
-                "Please fill in your appId in API-Example/profile/appIdInput.asset");
-        }
-
         private void InitEngine()
         {
             RtcEngine = Agora.Rtc.RtcEngine.CreateAgoraRtcEngine();
             UserEventHandler handler = new UserEventHandler(this);
             RtcEngineContext context = new RtcEngineContext(_appID, 0,
-                CHANNEL_PROFILE_TYPE.CHANNEL_PROFILE_LIVE_BROADCASTING,
+                CHANNEL_PROFILE_TYPE.CHANNEL_PROFILE_COMMUNICATION,
                 AUDIO_SCENARIO_TYPE.AUDIO_SCENARIO_DEFAULT);
             RtcEngine.Initialize(context);
             RtcEngine.InitEventHandler(handler);
@@ -168,12 +187,11 @@ namespace DefaultNamespace
             int streamId = CreateDataStreamId();
             if (streamId < 0)
             {
-                Log.UpdateLog("CreateDataStream failed!");
-                return;
+                Debug.LogError("CreateDataStream failed!");
             }
             else
             {
-                SendStreamMessage(streamId, "HERE");
+                SendStreamMessage(streamId, HERE_MESSAGE);
             }
         }
 
@@ -185,7 +203,7 @@ namespace DefaultNamespace
                 config.syncWithAudio = false;
                 config.ordered = true;
                 var nRet = RtcEngine.CreateDataStream(ref this._streamId, config);
-                Log.UpdateLog(string.Format("CreateDataStream: nRet{0}, streamId{1}", nRet, _streamId));
+                Debug.Log(string.Format("CreateDataStream: nRet{0}, streamId{1}", nRet, _streamId));
             }
 
             return _streamId;
@@ -195,7 +213,7 @@ namespace DefaultNamespace
         {
             byte[] byteArray = System.Text.Encoding.Default.GetBytes(message);
             var nRet = RtcEngine.SendStreamMessage(streamId, byteArray, Convert.ToUInt32(byteArray.Length));
-            Log.UpdateLog("SendStreamMessage :" + nRet);
+            Debug.Log("SendStreamMessage :" + nRet);
         }
 
         public void JoinChannel()
@@ -214,9 +232,25 @@ namespace DefaultNamespace
             config.bitrate = 0;
             config.orientationMode = ORIENTATION_MODE.ORIENTATION_MODE_ADAPTIVE;
             RtcEngine.SetVideoEncoderConfiguration(config);
+            RtcEngine.JoinChannel(_channelToken, _channelName, "", _userId);
+        }
+
+        public void EnableAudioVideo()
+        {
             RtcEngine.EnableAudio();
             RtcEngine.EnableVideo();
-            RtcEngine.JoinChannel(_channelToken, _channelName, "", _userId);
+            MakeVideoView(0);
+            GameObject.FindWithTag("VideoCanvas").GetComponent<Canvas>().enabled = true;
+            SendImHereMessage();
+        }
+        
+        public void DisableAudioVideo()
+        {
+            RtcEngine.DisableAudio();
+            RtcEngine.DisableVideo();
+            GameObject.FindWithTag("VideoCanvas").GetComponent<Canvas>().enabled = false;
+            GameObject currentVideoCanvas = GameObject.Find("0");
+            Destroy(currentVideoCanvas);
         }
 
         private void OnDestroy()
@@ -362,39 +396,38 @@ namespace DefaultNamespace
                 AgoraVideoManager._channelToken = null;
                 _agoraVideoManager.JoinChannel();
             }
-            _agoraVideoManager.Log.UpdateLog(fullError);
+            Debug.Log(fullError);
         }
 
         public override void OnJoinChannelSuccess(RtcConnection connection, int elapsed)
         {
             int build = 0;
-            _agoraVideoManager.Log.UpdateLog(string.Format("sdk version: ${0}",
+            Debug.Log(string.Format("sdk version: ${0}",
                 _agoraVideoManager.RtcEngine.GetVersion(ref build)));
-            _agoraVideoManager.Log.UpdateLog(
+            Debug.Log(
                 string.Format("OnJoinChannelSuccess channelName: {0}, uid: {1}, elapsed: {2}",
                     connection.channelId, connection.localUid, elapsed));
-            _agoraVideoManager.Log.UpdateLog(string.Format("New Token: {0}",
+            Debug.Log(string.Format("New Token: {0}",
                 AgoraVideoManager._channelToken));
             // HelperClass.FetchToken(tokenBase, channelName, 0, this.RenewOrJoinToken);
             AgoraVideoManager.MakeVideoView(0);
-            _agoraVideoManager.SendImHereMessage();
         }
 
         public override void OnRejoinChannelSuccess(RtcConnection connection, int elapsed)
         {
-            _agoraVideoManager.Log.UpdateLog("OnRejoinChannelSuccess");
+            Debug.Log("OnRejoinChannelSuccess");
         }
 
         public override void OnLeaveChannel(RtcConnection connection, RtcStats stats)
         {
-            _agoraVideoManager.Log.UpdateLog("OnLeaveChannel");
+            Debug.Log("OnLeaveChannel");
             AgoraVideoManager.DestroyVideoView(0);
         }
 
         public override void OnClientRoleChanged(RtcConnection connection, CLIENT_ROLE_TYPE oldRole,
             CLIENT_ROLE_TYPE newRole)
         {
-            _agoraVideoManager.Log.UpdateLog("OnClientRoleChanged");
+            Debug.Log("OnClientRoleChanged");
         }
         
         
@@ -405,6 +438,10 @@ namespace DefaultNamespace
                 string streamMessage = System.Text.Encoding.Default.GetString(data);
                 Debug.Log("Got message from " + remoteUid);
                 Debug.Log(streamMessage);
+                if (streamMessage == AgoraVideoManager.HERE_MESSAGE)
+                {
+                    OnHereMessage();
+                }
             }
             catch
             {
@@ -412,7 +449,15 @@ namespace DefaultNamespace
                 Debug.LogError(System.Text.Encoding.Default.GetString(data));
             }
         }
-        
+
+        private void OnHereMessage()
+        {
+            var isVideoScene = SceneManager.GetActiveScene().name == "Video";
+            if(!isVideoScene) {
+                GameObject.FindWithTag("ToastManager").GetComponent<ToastManager>().ShowYouHaveCall();    
+            }
+        }
+
         public override void OnStreamMessageError(RtcConnection connection, uint remoteUid, int streamId, int code, int missed, int cached)
         {
             Debug.LogError(string.Format(
@@ -422,14 +467,14 @@ namespace DefaultNamespace
 
         public override void OnUserJoined(RtcConnection connection, uint uid, int elapsed)
         {
-            _agoraVideoManager.Log.UpdateLog(string.Format("OnUserJoined uid: ${0} elapsed: ${1}", uid,
+            Debug.Log(string.Format("OnUserJoined uid: ${0} elapsed: ${1}", uid,
                 elapsed));
             AgoraVideoManager.MakeVideoView(uid, _agoraVideoManager.GetChannelName());
         }
 
         public override void OnUserOffline(RtcConnection connection, uint uid, USER_OFFLINE_REASON_TYPE reason)
         {
-            _agoraVideoManager.Log.UpdateLog(string.Format("OnUserOffLine uid: ${0}, reason: ${1}", uid,
+            Debug.Log(string.Format("OnUserOffLine uid: ${0}, reason: ${1}", uid,
                 (int)reason));
             AgoraVideoManager.DestroyVideoView(uid);
             var isAnotherUser = (uid != AgoraVideoManager._userId);
@@ -455,7 +500,7 @@ namespace DefaultNamespace
 
         public override void OnConnectionLost(RtcConnection connection)
         {
-            _agoraVideoManager.Log.UpdateLog(string.Format("OnConnectionLost "));
+            Debug.Log("OnConnectionLost ");
         }
     }
 }
