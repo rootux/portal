@@ -48,7 +48,13 @@ namespace DefaultNamespace {
 
         private void OnSceneLoaded(Scene scene, LoadSceneMode loadSceneMode)
         {
+            if (this == null)
+            {
+                return;
+            }
+
             Debug.Log("OnSceneLoaded" + scene.name);
+            source = GetComponent<AudioSource>();
             if (scene.name == "Video")
             {
                 source.volume = 0.2f;

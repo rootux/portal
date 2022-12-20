@@ -24,6 +24,8 @@ namespace DefaultNamespace
         public int agoraVideoWidth;
         public int agoraVideoFrameRate;
         public int agoraDeviceAudioPlayIndex;
+        public int screenRefWidth;
+        public int screenRefHeight;
 
         [field: NonSerialized()] private static readonly GlobalSettings instance = ImportSettingsFile();
 
