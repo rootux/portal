@@ -24,6 +24,7 @@ namespace DefaultNamespace
         private VideoDimensions videoDimensions;
         public static VideoSurface playerVideo;
         private int _streamId = -1;
+        public static string HERE_MESSAGE = "HERE";
 
         private int agoraDeviceAudioPlayIndex;
         private IAudioDeviceManager _audioDeviceManager;
@@ -190,7 +191,7 @@ namespace DefaultNamespace
             }
             else
             {
-                SendStreamMessage(streamId, "HERE");
+                SendStreamMessage(streamId, HERE_MESSAGE);
             }
         }
 
@@ -437,6 +438,10 @@ namespace DefaultNamespace
                 string streamMessage = System.Text.Encoding.Default.GetString(data);
                 Debug.Log("Got message from " + remoteUid);
                 Debug.Log(streamMessage);
+                if (streamMessage == AgoraVideoManager.HERE_MESSAGE)
+                {
+                    OnHereMessage();
+                }
             }
             catch
             {
@@ -444,7 +449,15 @@ namespace DefaultNamespace
                 Debug.LogError(System.Text.Encoding.Default.GetString(data));
             }
         }
-        
+
+        private void OnHereMessage()
+        {
+            var isVideoScene = SceneManager.GetActiveScene().name == "Video";
+            if(!isVideoScene) {
+                GameObject.FindWithTag("ToastManager").GetComponent<ToastManager>().ShowYouHaveCall();    
+            }
+        }
+
         public override void OnStreamMessageError(RtcConnection connection, uint remoteUid, int streamId, int code, int missed, int cached)
         {
             Debug.LogError(string.Format(
