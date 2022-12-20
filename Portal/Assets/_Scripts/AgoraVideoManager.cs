@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using Agora.Rtc;
@@ -18,8 +19,6 @@ namespace DefaultNamespace
         public static string _channelToken = null;
         internal static string _tokenBase;
         internal CONNECTION_STATE_TYPE _state = CONNECTION_STATE_TYPE.CONNECTION_STATE_DISCONNECTED;
-        private static int widthMultiplayer = 16;
-        private static int heightMultiplayer = 9;
         private static int frameRate;
         private VideoDimensions videoDimensions;
         public static VideoSurface playerVideo;
@@ -29,6 +28,7 @@ namespace DefaultNamespace
         private int agoraDeviceAudioPlayIndex;
         private IAudioDeviceManager _audioDeviceManager;
         private DeviceInfo[] _audioPlaybackDeviceInfos;
+        public List<uint> userIds = new();
 
         private static AgoraVideoManager instance = null;
         private void Awake()
@@ -71,13 +71,23 @@ namespace DefaultNamespace
             videoDimensions = new(GlobalSettings.Instance.agoraVideoWidth, GlobalSettings.Instance.agoraVideoHeight);
             agoraDeviceAudioPlayIndex = GlobalSettings.Instance.agoraDeviceAudioPlayIndex;
             _channelToken = GlobalSettings.Instance.agoraToken;
-
+            
             if (_userId == 0)
             {
                 throw new Exception("Please set user id to something that is not 0");
             }
 
+            SetCanvasScalarResolution();
             StartVideo();
+        }
+
+        private void SetCanvasScalarResolution()
+        {
+            int screenRefWidth = GlobalSettings.Instance.screenRefWidth; 
+            int screenRefHeight = GlobalSettings.Instance.screenRefHeight;
+            Debug.Log("setting the canvas scalar resolution to: " + screenRefWidth + ":" + screenRefHeight);
+            var canvasScaler = GameObject.FindWithTag("VideoCanvas").GetComponent<CanvasScaler>();
+            canvasScaler.referenceResolution = new Vector2(screenRefWidth, screenRefHeight);
         }
 
         public void StartVideo()
@@ -240,6 +250,11 @@ namespace DefaultNamespace
             RtcEngine.EnableAudio();
             RtcEngine.EnableVideo();
             MakeVideoView(0);
+            // restore existing user videos
+            foreach (var uid in userIds)
+            {
+                MakeVideoView(uid, GetChannelName());
+            }
             GameObject.FindWithTag("VideoCanvas").GetComponent<Canvas>().enabled = true;
             SendImHereMessage();
         }
@@ -251,6 +266,14 @@ namespace DefaultNamespace
             GameObject.FindWithTag("VideoCanvas").GetComponent<Canvas>().enabled = false;
             GameObject currentVideoCanvas = GameObject.Find("0");
             Destroy(currentVideoCanvas);
+            foreach (var uid in userIds)
+            {
+                GameObject otherUser = GameObject.Find(uid.ToString());
+                if (otherUser != null)
+                {
+                    DestroyVideoView(uid);
+                }
+            }
         }
 
         private void OnDestroy()
@@ -354,7 +377,7 @@ namespace DefaultNamespace
             }
 
             // set up transform
-            go.transform.Rotate(0f, 0.0f, 180.0f);
+            go.transform.Rotate(0f, 0.0f, -90.0f);
             go.transform.localPosition = Vector3.zero;
             go.transform.localScale = new Vector3(3f, 4f, 1f);
 
@@ -467,6 +490,11 @@ namespace DefaultNamespace
 
         public override void OnUserJoined(RtcConnection connection, uint uid, int elapsed)
         {
+            if (!_agoraVideoManager.userIds.Contains(uid))
+            {
+                _agoraVideoManager.userIds.Add(uid);
+            }
+
             Debug.Log(string.Format("OnUserJoined uid: ${0} elapsed: ${1}", uid,
                 elapsed));
             AgoraVideoManager.MakeVideoView(uid, _agoraVideoManager.GetChannelName());
@@ -474,6 +502,11 @@ namespace DefaultNamespace
 
         public override void OnUserOffline(RtcConnection connection, uint uid, USER_OFFLINE_REASON_TYPE reason)
         {
+            if (_agoraVideoManager.userIds.Contains(uid))
+            {
+                _agoraVideoManager.userIds.Remove(uid);
+            }
+
             Debug.Log(string.Format("OnUserOffLine uid: ${0}, reason: ${1}", uid,
                 (int)reason));
             AgoraVideoManager.DestroyVideoView(uid);

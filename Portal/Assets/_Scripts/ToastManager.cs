@@ -7,7 +7,7 @@ public class ToastManager : MonoBehaviour
 {
    private IEnumerator coroutine = null;
 
-   private float TIMEOUT = 3.0f;
+   private float TIMEOUT = 10.0f;
 
    
    private void Awake()
@@ -17,6 +17,10 @@ public class ToastManager : MonoBehaviour
 
    private void OnSceneLoaded(Scene scene, LoadSceneMode loadSceneMode)
    {
+      if (this == null)
+      {
+         return;
+      }
       if (scene.name == "Video")
       {
          CancelAndHide();

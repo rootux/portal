@@ -63,10 +63,22 @@ public sealed partial class SkinnedMeshBaker : MonoBehaviour
     {
         if (!IsValid) return;
 
-        _samplePoints.Dispose();
-        _positionBuffer1.Dispose();
-        _positionBuffer2.Dispose();
-        _normalBuffer.Dispose();
+        if (_samplePoints != null)
+        {
+            _samplePoints.Dispose();
+        }
+        if (_positionBuffer1 != null)
+        {
+            _positionBuffer1.Dispose();
+        }
+        if (_positionBuffer2 != null)
+        {
+            _positionBuffer2.Dispose();
+        }
+        if (_normalBuffer != null)
+        {
+            _normalBuffer.Dispose();
+        }
 
         Destroy(_positionMap);
         Destroy(_velocityMap);
