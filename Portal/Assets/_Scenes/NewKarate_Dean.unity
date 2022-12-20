@@ -6579,7 +6579,7 @@ MonoBehaviour:
       mirrorPositionProxySpace: {x: 0, y: 0, z: 0}
       mirrorRotationProxySpace: {x: -0.70710677, y: 0, z: 0, w: 0.70710677}
     resolutionScalable:
-      m_Override: 512
+      m_Override: 1024
       m_UseOverride: 1
       m_Level: 1
     resolution: 1024
