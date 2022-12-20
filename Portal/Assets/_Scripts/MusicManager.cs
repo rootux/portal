@@ -48,7 +48,7 @@ namespace DefaultNamespace {
 
         private void OnSceneLoaded(Scene scene, LoadSceneMode loadSceneMode)
         {
-            Debug.Log("MuscPlayer: OnSceneLoaded");
+            Debug.Log("OnSceneLoaded" + scene.name);
             source = GetComponent<AudioSource>();
             if (scene.name == "Video")
             {

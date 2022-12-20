@@ -14,18 +14,11 @@ namespace Agora_RTC_Plugin.API_Example.Examples.Advanced.StreamMessage
         [SerializeField]
         private AppIdInput _appIdInput;
 
-        [Header("_____________Basic Configuration_____________")]
-        [FormerlySerializedAs("APP_ID")]
-        [SerializeField]
-        public string _appID = "";
-
-        [FormerlySerializedAs("TOKEN")]
-        [SerializeField]
-        public string _token = "";
-
-        [FormerlySerializedAs("CHANNEL_NAME")]
-        [SerializeField]
-        public string _channelName = "";
+        private string _appID = "6cb2896f463a48849fdbfb390269d341";
+        
+        private string _token = "0066cb2896f463a48849fdbfb390269d341IACk9EyVav8uI/0EXOUfvlTtsO/qIXgmlcvsDwZpyPlUjfCTrgu379yDIgAByGwDwBijYwQAAQDAR7BjAgDAR7BjAwDAR7BjBADAR7Bj";
+        
+        private string _channelName = "portal";
 
 
         public Text LogText;
@@ -58,7 +51,8 @@ namespace Agora_RTC_Plugin.API_Example.Examples.Advanced.StreamMessage
         private bool CheckAppId()
         {
             Log = new Logger(LogText);
-            return Log.DebugAssert(_appID.Length > 10, "Please fill in your appId in API-Example/profile/appIdInput.asset");
+            return true;
+            //return Log.DebugAssert(_appID.Length > 10, "Please fill in your appId in API-Example/profile/appIdInput.asset");
         }
 
         private void InitEngine()
