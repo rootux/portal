@@ -6,6 +6,7 @@ TagManager:
   tags:
   - Stats
   - MusicManager
+  - VideoCanvas
   layers:
   - Default
   - TransparentFX
