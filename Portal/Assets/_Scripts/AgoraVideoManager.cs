@@ -238,7 +238,9 @@ namespace DefaultNamespace
         {
             RtcEngine.EnableAudio();
             RtcEngine.EnableVideo();
+            MakeVideoView(0);
             GameObject.FindWithTag("VideoCanvas").GetComponent<Canvas>().enabled = true;
+            SendImHereMessage();
         }
         
         public void DisableAudioVideo()
@@ -246,6 +248,8 @@ namespace DefaultNamespace
             RtcEngine.DisableAudio();
             RtcEngine.DisableVideo();
             GameObject.FindWithTag("VideoCanvas").GetComponent<Canvas>().enabled = false;
+            GameObject currentVideoCanvas = GameObject.Find("0");
+            Destroy(currentVideoCanvas);
         }
 
         private void OnDestroy()
@@ -406,7 +410,6 @@ namespace DefaultNamespace
                 AgoraVideoManager._channelToken));
             // HelperClass.FetchToken(tokenBase, channelName, 0, this.RenewOrJoinToken);
             AgoraVideoManager.MakeVideoView(0);
-            _agoraVideoManager.SendImHereMessage();
         }
 
         public override void OnRejoinChannelSuccess(RtcConnection connection, int elapsed)
