@@ -3,6 +3,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using Agora.Rtc;
 using Agora.Util;
+using Agora_RTC_Plugin.API_Example.Examples.Advanced.SetBeautyEffectOptions;
 using Logger = Agora.Util.Logger;
 using Object = UnityEngine.Object;
 using SceneManager = UnityEngine.SceneManagement.SceneManager;
@@ -26,6 +27,7 @@ namespace DefaultNamespace
         private static int frameRate;
         private VideoDimensions videoDimensions;
         public static VideoSurface playerVideo;
+        private int _streamId = -1;
 
         private int agoraDeviceAudioPlayIndex;
         private IAudioDeviceManager _audioDeviceManager;
@@ -39,12 +41,13 @@ namespace DefaultNamespace
             _tokenBase = GlobalSettings.Instance.agoraTokenBase;
             _userId = GlobalSettings.Instance.agoraUserId;
             frameRate = GlobalSettings.Instance.agoraVideoFrameRate;
-            videoDimensions = new (GlobalSettings.Instance.agoraVideoWidth, GlobalSettings.Instance.agoraVideoHeight);
+            videoDimensions = new(GlobalSettings.Instance.agoraVideoWidth, GlobalSettings.Instance.agoraVideoHeight);
             agoraDeviceAudioPlayIndex = GlobalSettings.Instance.agoraDeviceAudioPlayIndex;
             if (_userId == 0)
             {
                 throw new Exception("Please set user id to something that is not 0");
             }
+
             _channelToken = GlobalSettings.Instance.agoraToken;
             StartVideo();
         }
@@ -55,6 +58,7 @@ namespace DefaultNamespace
             {
                 InitEngine();
                 CallDeviceManagerApi();
+                SetBeautyEffect();
                 JoinChannel();
             }
         }
@@ -65,6 +69,18 @@ namespace DefaultNamespace
             SetCurrentDevice();
             SetCurrentDeviceVolume();
         }
+
+        private void SetBeautyEffect()
+        {
+            var beautyOptions = new BeautyOptions();
+            beautyOptions.lighteningContrastLevel = LIGHTENING_CONTRAST_LEVEL.LIGHTENING_CONTRAST_HIGH;
+
+            beautyOptions.smoothnessLevel = 1.0f;
+            beautyOptions.sharpnessLevel = 0.3f;
+
+            RtcEngine.SetBeautyEffectOptions(true, beautyOptions);
+        }
+
         private void GetAudioPlaybackDevice()
         {
             _audioDeviceManager = RtcEngine.GetAudioDeviceManager();
@@ -76,17 +92,18 @@ namespace DefaultNamespace
                     _audioPlaybackDeviceInfos[i].deviceName, _audioPlaybackDeviceInfos[i].deviceId));
             }
         }
-        
+
         private void SetCurrentDevice()
         {
             if (_audioDeviceManager != null && _audioPlaybackDeviceInfos.Length > agoraDeviceAudioPlayIndex)
             {
-                Log.UpdateLog("Settings audio device to index " + agoraDeviceAudioPlayIndex + " which is " + _audioPlaybackDeviceInfos[agoraDeviceAudioPlayIndex].deviceName);
+                Log.UpdateLog("Settings audio device to index " + agoraDeviceAudioPlayIndex + " which is " +
+                              _audioPlaybackDeviceInfos[agoraDeviceAudioPlayIndex].deviceName);
                 _audioDeviceManager.SetPlaybackDevice(_audioPlaybackDeviceInfos[agoraDeviceAudioPlayIndex].deviceId);
-                                
+
             }
         }
-        
+
         private void SetCurrentDeviceVolume()
         {
             if (_audioDeviceManager != null) _audioDeviceManager.SetRecordingDeviceVolume(100);
@@ -134,7 +151,7 @@ namespace DefaultNamespace
             return Log.DebugAssert(_appID.Length > 10,
                 "Please fill in your appId in API-Example/profile/appIdInput.asset");
         }
-        
+
         private void InitEngine()
         {
             RtcEngine = Agora.Rtc.RtcEngine.CreateAgoraRtcEngine();
@@ -146,25 +163,60 @@ namespace DefaultNamespace
             RtcEngine.InitEventHandler(handler);
         }
 
-    public void JoinChannel()
-    {
-        RtcEngine.SetClientRole(CLIENT_ROLE_TYPE.CLIENT_ROLE_BROADCASTER);
-        Debug.Log(_channelToken);
-        if (string.IsNullOrEmpty(_channelToken))
+        public void SendImHereMessage()
         {
-            StartCoroutine(HelperClass.FetchToken(_tokenBase, _channelName, _userId, this.RenewOrJoinToken));
-            return;
+            int streamId = CreateDataStreamId();
+            if (streamId < 0)
+            {
+                Log.UpdateLog("CreateDataStream failed!");
+                return;
+            }
+            else
+            {
+                SendStreamMessage(streamId, "HERE");
+            }
         }
-        
-        VideoEncoderConfiguration config = new VideoEncoderConfiguration();
-        config.dimensions = videoDimensions;
-        config.frameRate = frameRate;
-        config.bitrate = 0;
-        config.orientationMode = ORIENTATION_MODE.ORIENTATION_MODE_ADAPTIVE;
-        RtcEngine.SetVideoEncoderConfiguration(config);
-        RtcEngine.EnableAudio();
-        RtcEngine.EnableVideo();
-        RtcEngine.JoinChannel(_channelToken, _channelName, "", _userId);
+
+        private int CreateDataStreamId()
+        {
+            if (_streamId == -1)
+            {
+                var config = new DataStreamConfig();
+                config.syncWithAudio = false;
+                config.ordered = true;
+                var nRet = RtcEngine.CreateDataStream(ref this._streamId, config);
+                Log.UpdateLog(string.Format("CreateDataStream: nRet{0}, streamId{1}", nRet, _streamId));
+            }
+
+            return _streamId;
+        }
+
+        private void SendStreamMessage(int streamId, string message)
+        {
+            byte[] byteArray = System.Text.Encoding.Default.GetBytes(message);
+            var nRet = RtcEngine.SendStreamMessage(streamId, byteArray, Convert.ToUInt32(byteArray.Length));
+            Log.UpdateLog("SendStreamMessage :" + nRet);
+        }
+
+        public void JoinChannel()
+        {
+            RtcEngine.SetClientRole(CLIENT_ROLE_TYPE.CLIENT_ROLE_BROADCASTER);
+            Debug.Log(_channelToken);
+            if (string.IsNullOrEmpty(_channelToken))
+            {
+                StartCoroutine(HelperClass.FetchToken(_tokenBase, _channelName, _userId, this.RenewOrJoinToken));
+                return;
+            }
+
+            VideoEncoderConfiguration config = new VideoEncoderConfiguration();
+            config.dimensions = videoDimensions;
+            config.frameRate = frameRate;
+            config.bitrate = 0;
+            config.orientationMode = ORIENTATION_MODE.ORIENTATION_MODE_ADAPTIVE;
+            RtcEngine.SetVideoEncoderConfiguration(config);
+            RtcEngine.EnableAudio();
+            RtcEngine.EnableVideo();
+            RtcEngine.JoinChannel(_channelToken, _channelName, "", _userId);
         }
 
         private void OnDestroy()
@@ -325,6 +377,7 @@ namespace DefaultNamespace
                 AgoraVideoManager._channelToken));
             // HelperClass.FetchToken(tokenBase, channelName, 0, this.RenewOrJoinToken);
             AgoraVideoManager.MakeVideoView(0);
+            _agoraVideoManager.SendImHereMessage();
         }
 
         public override void OnRejoinChannelSuccess(RtcConnection connection, int elapsed)
@@ -342,6 +395,29 @@ namespace DefaultNamespace
             CLIENT_ROLE_TYPE newRole)
         {
             _agoraVideoManager.Log.UpdateLog("OnClientRoleChanged");
+        }
+        
+        
+        public override void OnStreamMessage(RtcConnection connection, uint remoteUid, int streamId, byte[] data, uint length, ulong sentTs)
+        {
+            try
+            {
+                string streamMessage = System.Text.Encoding.Default.GetString(data);
+                Debug.Log("Got message from " + remoteUid);
+                Debug.Log(streamMessage);
+            }
+            catch
+            {
+                Debug.LogError("error while parsing stream message");
+                Debug.LogError(System.Text.Encoding.Default.GetString(data));
+            }
+        }
+        
+        public override void OnStreamMessageError(RtcConnection connection, uint remoteUid, int streamId, int code, int missed, int cached)
+        {
+            Debug.LogError(string.Format(
+                "OnStreamMessageError remoteUid: {0}, streamId: {1}, code: {2}, missed: {3}, cached: {4}", remoteUid,
+                streamId, code, missed, cached));
         }
 
         public override void OnUserJoined(RtcConnection connection, uint uid, int elapsed)

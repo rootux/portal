@@ -14,17 +14,11 @@ namespace Agora_RTC_Plugin.API_Example.Examples.Advanced.SetBeautyEffectOptions
         private AppIdInput _appIdInput;
 
         [Header("_____________Basic Configuration_____________")]
-        [FormerlySerializedAs("APP_ID")]
-        [SerializeField]
-        private string _appID = "";
-
-        [FormerlySerializedAs("TOKEN")]
-        [SerializeField]
-        private string _token = "";
-
-        [FormerlySerializedAs("CHANNEL_NAME")]
-        [SerializeField]
-        private string _channelName = "";
+        private string _appID = "6cb2896f463a48849fdbfb390269d341";
+        
+        private string _token = "0066cb2896f463a48849fdbfb390269d341IAAWM9S0LFbEHZNsyo25JUVyTcj4mjkNWlGzRdqCqK7O9PCTrgu379yDIgDroYMCiw+jYwQAAQCLPrBjAgCLPrBjAwCLPrBjBACLPrBj";
+        
+        private string _channelName = "portal";
 
         public Text LogText;
         internal Logger Log;
@@ -72,7 +66,8 @@ namespace Agora_RTC_Plugin.API_Example.Examples.Advanced.SetBeautyEffectOptions
         private bool CheckAppId()
         {
             Log = new Logger(LogText);
-            return Log.DebugAssert(_appID.Length > 10, "Please fill in your appId in API-Example/profile/appIdInput.asset");
+            return true;
+            //return Log.DebugAssert(_appID.Length > 10, "Please fill in your appId in API-Example/profile/appIdInput.asset");
         }
 
         private void InitEngine()
@@ -88,6 +83,7 @@ namespace Agora_RTC_Plugin.API_Example.Examples.Advanced.SetBeautyEffectOptions
 
         private void JoinChannel()
         {
+            Log.UpdateLog("Joining channel");
             RtcEngine.EnableAudio();
             RtcEngine.EnableVideo();
             RtcEngine.SetClientRole(CLIENT_ROLE_TYPE.CLIENT_ROLE_BROADCASTER);
