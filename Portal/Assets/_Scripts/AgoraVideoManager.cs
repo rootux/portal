@@ -341,7 +341,7 @@ namespace DefaultNamespace
 
             go.name = goName;
             // set up transform
-            go.transform.Rotate(-90.0f, 0.0f, 0.0f);
+            go.transform.Rotate(-90.0f, -180.0f, 0.0f);
             go.transform.position = Vector3.zero;
             go.transform.localScale = new Vector3(0.25f, 0.5f, .5f);
 
